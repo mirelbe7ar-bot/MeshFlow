@@ -1,10 +1,10 @@
 # MeshFlow CI gate: checks every proposed schema change against the consumer contracts.
 name: MeshFlow contract check
 
+# Runs on every pull request, so it can be a required check for merging.
+# Pull requests that do not touch migrations/ simply pass.
 on:
   pull_request:
-    paths:
-      - "migrations/**.sql"
 
 jobs:
   check-schema-changes:

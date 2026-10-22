@@ -1,0 +1,33 @@
+contract: Purchasing.vw_PurchaseCostVsListPrice
+consumer_domain: Purchasing
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Production.Product
+  producer_domain: Production
+  cross_domain: true
+  columns:
+  - name: ListPrice
+    type: money
+  - name: MakeFlag
+    type: bit
+  - name: Name
+    type: nvarchar(50)
+  - name: ProductID
+    type: int
+  - name: ProductNumber
+    type: nvarchar(25)
+  - name: StandardCost
+    type: money
+- table: Purchasing.PurchaseOrderDetail
+  producer_domain: Purchasing
+  cross_domain: false
+  columns:
+  - name: ProductID
+    type: int
+  - name: ReceivedQty
+    type: decimal(8,2)
+  - name: UnitPrice
+    type: money

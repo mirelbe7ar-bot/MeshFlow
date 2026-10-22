@@ -1,0 +1,51 @@
+contract: Sales.vw_ProductSalesByTerritory
+consumer_domain: Sales
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Production.Product
+  producer_domain: Production
+  cross_domain: true
+  columns:
+  - name: Color
+    type: nvarchar(15)
+  - name: FinishedGoodsFlag
+    type: bit
+  - name: Name
+    type: nvarchar(50)
+  - name: ProductID
+    type: int
+  - name: ProductNumber
+    type: nvarchar(25)
+- table: Sales.SalesOrderDetail
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: LineTotal
+    type: numeric(38,6)
+  - name: OrderQty
+    type: smallint
+  - name: ProductID
+    type: int
+  - name: SalesOrderID
+    type: int
+- table: Sales.SalesOrderHeader
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: SalesOrderID
+    type: int
+  - name: TerritoryID
+    type: int
+- table: Sales.SalesTerritory
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: Group
+    type: nvarchar(50)
+  - name: Name
+    type: nvarchar(50)
+  - name: TerritoryID
+    type: int

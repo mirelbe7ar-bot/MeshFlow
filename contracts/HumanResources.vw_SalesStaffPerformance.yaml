@@ -1,0 +1,49 @@
+contract: HumanResources.vw_SalesStaffPerformance
+consumer_domain: HumanResources
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: HumanResources.Employee
+  producer_domain: HumanResources
+  cross_domain: false
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: HireDate
+    type: date
+  - name: JobTitle
+    type: nvarchar(50)
+- table: Person.Person
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: FirstName
+    type: nvarchar(50)
+  - name: LastName
+    type: nvarchar(50)
+- table: Sales.SalesPerson
+  producer_domain: Sales
+  cross_domain: true
+  columns:
+  - name: Bonus
+    type: money
+  - name: BusinessEntityID
+    type: int
+  - name: SalesQuota
+    type: money
+  - name: SalesYTD
+    type: money
+  - name: TerritoryID
+    type: int
+- table: Sales.SalesTerritory
+  producer_domain: Sales
+  cross_domain: true
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: TerritoryID
+    type: int

@@ -1,0 +1,34 @@
+# MeshFlow CI gate: checks every proposed schema change against the consumer contracts.
+name: MeshFlow contract check
+
+on:
+  pull_request:
+    paths:
+      - "migrations/**.sql"
+
+jobs:
+  check-schema-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install the checker's libraries
+        run: pip install sqlglot pyyaml
+
+      - name: Check every changed migration
+        run: |
+          files=$(git diff --name-only --diff-filter=AM "origin/${{ github.base_ref }}...HEAD" -- 'migrations/*.sql')
+          if [ -z "$files" ]; then echo "No migration files changed."; exit 0; fi
+          status=0
+          for f in $files; do
+            python framework/check_change.py "$f" || status=1
+          done
+          exit $status

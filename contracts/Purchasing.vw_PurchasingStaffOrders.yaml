@@ -1,0 +1,37 @@
+contract: Purchasing.vw_PurchasingStaffOrders
+consumer_domain: Purchasing
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: HumanResources.Employee
+  producer_domain: HumanResources
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: JobTitle
+    type: nvarchar(50)
+- table: Person.Person
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: FirstName
+    type: nvarchar(50)
+  - name: LastName
+    type: nvarchar(50)
+- table: Purchasing.PurchaseOrderHeader
+  producer_domain: Purchasing
+  cross_domain: false
+  columns:
+  - name: EmployeeID
+    type: int
+  - name: OrderDate
+    type: datetime
+  - name: PurchaseOrderID
+    type: int
+  - name: TotalDue
+    type: money

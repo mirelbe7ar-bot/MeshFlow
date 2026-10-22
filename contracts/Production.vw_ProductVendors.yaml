@@ -1,0 +1,47 @@
+contract: Production.vw_ProductVendors
+consumer_domain: Production
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Production.Product
+  producer_domain: Production
+  cross_domain: false
+  columns:
+  - name: MakeFlag
+    type: bit
+  - name: Name
+    type: nvarchar(50)
+  - name: ProductID
+    type: int
+  - name: ProductNumber
+    type: nvarchar(25)
+- table: Purchasing.ProductVendor
+  producer_domain: Purchasing
+  cross_domain: true
+  columns:
+  - name: AverageLeadTime
+    type: int
+  - name: BusinessEntityID
+    type: int
+  - name: MinOrderQty
+    type: int
+  - name: ProductID
+    type: int
+  - name: StandardPrice
+    type: money
+- table: Purchasing.Vendor
+  producer_domain: Purchasing
+  cross_domain: true
+  columns:
+  - name: ActiveFlag
+    type: bit
+  - name: BusinessEntityID
+    type: int
+  - name: CreditRating
+    type: tinyint
+  - name: Name
+    type: nvarchar(50)
+  - name: PreferredVendorStatus
+    type: bit

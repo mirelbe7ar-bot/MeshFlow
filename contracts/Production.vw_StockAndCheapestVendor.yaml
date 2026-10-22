@@ -1,0 +1,45 @@
+contract: Production.vw_StockAndCheapestVendor
+consumer_domain: Production
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Production.Product
+  producer_domain: Production
+  cross_domain: false
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: ProductID
+    type: int
+  - name: ProductNumber
+    type: nvarchar(25)
+  - name: ReorderPoint
+    type: smallint
+- table: Production.ProductInventory
+  producer_domain: Production
+  cross_domain: false
+  columns:
+  - name: ProductID
+    type: int
+  - name: Quantity
+    type: smallint
+- table: Purchasing.ProductVendor
+  producer_domain: Purchasing
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: ProductID
+    type: int
+  - name: StandardPrice
+    type: money
+- table: Purchasing.Vendor
+  producer_domain: Purchasing
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: Name
+    type: nvarchar(50)

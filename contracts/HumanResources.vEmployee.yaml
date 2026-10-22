@@ -1,0 +1,103 @@
+contract: HumanResources.vEmployee
+consumer_domain: HumanResources
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: HumanResources.Employee
+  producer_domain: HumanResources
+  cross_domain: false
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: JobTitle
+    type: nvarchar(50)
+- table: Person.Address
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: AddressID
+    type: int
+  - name: AddressLine1
+    type: nvarchar(60)
+  - name: AddressLine2
+    type: nvarchar(60)
+  - name: City
+    type: nvarchar(30)
+  - name: PostalCode
+    type: nvarchar(15)
+  - name: StateProvinceID
+    type: int
+- table: Person.BusinessEntityAddress
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: AddressID
+    type: int
+  - name: BusinessEntityID
+    type: int
+- table: Person.CountryRegion
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: CountryRegionCode
+    type: nvarchar(3)
+  - name: Name
+    type: nvarchar(50)
+- table: Person.EmailAddress
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: EmailAddress
+    type: nvarchar(50)
+- table: Person.Person
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: AdditionalContactInfo
+    type: xml(max)
+  - name: BusinessEntityID
+    type: int
+  - name: EmailPromotion
+    type: int
+  - name: FirstName
+    type: nvarchar(50)
+  - name: LastName
+    type: nvarchar(50)
+  - name: MiddleName
+    type: nvarchar(50)
+  - name: Suffix
+    type: nvarchar(10)
+  - name: Title
+    type: nvarchar(8)
+- table: Person.PersonPhone
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: PhoneNumber
+    type: nvarchar(25)
+  - name: PhoneNumberTypeID
+    type: int
+- table: Person.PhoneNumberType
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: PhoneNumberTypeID
+    type: int
+- table: Person.StateProvince
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: CountryRegionCode
+    type: nvarchar(3)
+  - name: Name
+    type: nvarchar(50)
+  - name: StateProvinceID
+    type: int

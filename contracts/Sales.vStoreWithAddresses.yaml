@@ -1,0 +1,67 @@
+contract: Sales.vStoreWithAddresses
+consumer_domain: Sales
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Person.Address
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: AddressID
+    type: int
+  - name: AddressLine1
+    type: nvarchar(60)
+  - name: AddressLine2
+    type: nvarchar(60)
+  - name: City
+    type: nvarchar(30)
+  - name: PostalCode
+    type: nvarchar(15)
+  - name: StateProvinceID
+    type: int
+- table: Person.AddressType
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: AddressTypeID
+    type: int
+  - name: Name
+    type: nvarchar(50)
+- table: Person.BusinessEntityAddress
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: AddressID
+    type: int
+  - name: AddressTypeID
+    type: int
+  - name: BusinessEntityID
+    type: int
+- table: Person.CountryRegion
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: CountryRegionCode
+    type: nvarchar(3)
+  - name: Name
+    type: nvarchar(50)
+- table: Person.StateProvince
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: CountryRegionCode
+    type: nvarchar(3)
+  - name: Name
+    type: nvarchar(50)
+  - name: StateProvinceID
+    type: int
+- table: Sales.Store
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: Name
+    type: nvarchar(50)

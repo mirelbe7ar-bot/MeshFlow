@@ -1,0 +1,37 @@
+contract: HumanResources.vw_DepartmentHeadcount
+consumer_domain: HumanResources
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: HumanResources.Department
+  producer_domain: HumanResources
+  cross_domain: false
+  columns:
+  - name: DepartmentID
+    type: smallint
+  - name: GroupName
+    type: nvarchar(50)
+  - name: Name
+    type: nvarchar(50)
+- table: HumanResources.EmployeeDepartmentHistory
+  producer_domain: HumanResources
+  cross_domain: false
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: DepartmentID
+    type: smallint
+  - name: EndDate
+    type: date
+- table: Person.Person
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: FirstName
+    type: nvarchar(50)
+  - name: LastName
+    type: nvarchar(50)

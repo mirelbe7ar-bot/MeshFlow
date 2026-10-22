@@ -1,0 +1,43 @@
+contract: Production.vProductAndDescription
+consumer_domain: Production
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Production.Product
+  producer_domain: Production
+  cross_domain: false
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: ProductID
+    type: int
+  - name: ProductModelID
+    type: int
+- table: Production.ProductDescription
+  producer_domain: Production
+  cross_domain: false
+  columns:
+  - name: Description
+    type: nvarchar(400)
+  - name: ProductDescriptionID
+    type: int
+- table: Production.ProductModel
+  producer_domain: Production
+  cross_domain: false
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: ProductModelID
+    type: int
+- table: Production.ProductModelProductDescriptionCulture
+  producer_domain: Production
+  cross_domain: false
+  columns:
+  - name: CultureID
+    type: nchar(6)
+  - name: ProductDescriptionID
+    type: int
+  - name: ProductModelID
+    type: int

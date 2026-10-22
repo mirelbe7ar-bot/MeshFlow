@@ -1,0 +1,31 @@
+contract: Person.vStateProvinceCountryRegion
+consumer_domain: Person
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Person.CountryRegion
+  producer_domain: Person
+  cross_domain: false
+  columns:
+  - name: CountryRegionCode
+    type: nvarchar(3)
+  - name: Name
+    type: nvarchar(50)
+- table: Person.StateProvince
+  producer_domain: Person
+  cross_domain: false
+  columns:
+  - name: CountryRegionCode
+    type: nvarchar(3)
+  - name: IsOnlyStateProvinceFlag
+    type: bit
+  - name: Name
+    type: nvarchar(50)
+  - name: StateProvinceCode
+    type: nchar(3)
+  - name: StateProvinceID
+    type: int
+  - name: TerritoryID
+    type: int

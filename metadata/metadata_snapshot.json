@@ -1,0 +1,3836 @@
+{
+  "server": "localhost\\MSSQLSERVER02",
+  "database": "AdventureWorks2022",
+  "exported_at": "2026-10-22T11:30:14",
+  "views": [
+    {
+      "schema": "HumanResources",
+      "name": "vEmployee",
+      "definition": "\r\nCREATE VIEW [HumanResources].[vEmployee] \r\nAS \r\nSELECT \r\n    e.[BusinessEntityID]\r\n    ,p.[Title]\r\n    ,p.[FirstName]\r\n    ,p.[MiddleName]\r\n    ,p.[LastName]\r\n    ,p.[Suffix]\r\n    ,e.[JobTitle]  \r\n    ,pp.[PhoneNumber]\r\n    ,pnt.[Name] AS [PhoneNumberType]\r\n    ,ea.[EmailAddress]\r\n    ,p.[EmailPromotion]\r\n    ,a.[AddressLine1]\r\n    ,a.[AddressLine2]\r\n    ,a.[City]\r\n    ,sp.[Name] AS [StateProvinceName] \r\n    ,a.[PostalCode]\r\n    ,cr.[Name] AS [CountryRegionName] \r\n    ,p.[AdditionalContactInfo]\r\nFROM [HumanResources].[Employee] e\r\n\tINNER JOIN [Person].[Person] p\r\n\tON p.[BusinessEntityID] = e.[BusinessEntityID]\r\n    INNER JOIN [Person].[BusinessEntityAddress] bea \r\n    ON bea.[BusinessEntityID] = e.[BusinessEntityID] \r\n    INNER JOIN [Person].[Address] a \r\n    ON a.[AddressID] = bea.[AddressID]\r\n    INNER JOIN [Person].[StateProvince] sp \r\n    ON sp.[StateProvinceID] = a.[StateProvinceID]\r\n    INNER JOIN [Person].[CountryRegion] cr \r\n    ON cr.[CountryRegionCode] = sp.[CountryRegionCode]\r\n    LEFT OUTER JOIN [Person].[PersonPhone] pp\r\n    ON pp.BusinessEntityID = p.[BusinessEntityID]\r\n    LEFT OUTER JOIN [Person].[PhoneNumberType] pnt\r\n    ON pp.[PhoneNumberTypeID] = pnt.[PhoneNumberTypeID]\r\n    LEFT OUTER JOIN [Person].[EmailAddress] ea\r\n    ON p.[BusinessEntityID] = ea.[BusinessEntityID];\r\n"
+    },
+    {
+      "schema": "HumanResources",
+      "name": "vEmployeeDepartment",
+      "definition": "\r\nCREATE VIEW [HumanResources].[vEmployeeDepartment] \r\nAS \r\nSELECT \r\n    e.[BusinessEntityID] \r\n    ,p.[Title] \r\n    ,p.[FirstName] \r\n    ,p.[MiddleName] \r\n    ,p.[LastName] \r\n    ,p.[Suffix] \r\n    ,e.[JobTitle]\r\n    ,d.[Name] AS [Department] \r\n    ,d.[GroupName] \r\n    ,edh.[StartDate] \r\nFROM [HumanResources].[Employee] e\r\n\tINNER JOIN [Person].[Person] p\r\n\tON p.[BusinessEntityID] = e.[BusinessEntityID]\r\n    INNER JOIN [HumanResources].[EmployeeDepartmentHistory] edh \r\n    ON e.[BusinessEntityID] = edh.[BusinessEntityID] \r\n    INNER JOIN [HumanResources].[Department] d \r\n    ON edh.[DepartmentID] = d.[DepartmentID] \r\nWHERE edh.EndDate IS NULL\r\n"
+    },
+    {
+      "schema": "HumanResources",
+      "name": "vEmployeeDepartmentHistory",
+      "definition": "\r\nCREATE VIEW [HumanResources].[vEmployeeDepartmentHistory] \r\nAS \r\nSELECT \r\n    e.[BusinessEntityID] \r\n    ,p.[Title] \r\n    ,p.[FirstName] \r\n    ,p.[MiddleName] \r\n    ,p.[LastName] \r\n    ,p.[Suffix] \r\n    ,s.[Name] AS [Shift]\r\n    ,d.[Name] AS [Department] \r\n    ,d.[GroupName] \r\n    ,edh.[StartDate] \r\n    ,edh.[EndDate]\r\nFROM [HumanResources].[Employee] e\r\n\tINNER JOIN [Person].[Person] p\r\n\tON p.[BusinessEntityID] = e.[BusinessEntityID]\r\n    INNER JOIN [HumanResources].[EmployeeDepartmentHistory] edh \r\n    ON e.[BusinessEntityID] = edh.[BusinessEntityID] \r\n    INNER JOIN [HumanResources].[Department] d \r\n    ON edh.[DepartmentID] = d.[DepartmentID] \r\n    INNER JOIN [HumanResources].[Shift] s\r\n    ON s.[ShiftID] = edh.[ShiftID];\r\n"
+    },
+    {
+      "schema": "HumanResources",
+      "name": "vJobCandidate",
+      "definition": "\r\nCREATE VIEW [HumanResources].[vJobCandidate] \r\nAS \r\nSELECT \r\n    jc.[JobCandidateID] \r\n    ,jc.[BusinessEntityID] \r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (/Resume/Name/Name.Prefix)[1]', 'nvarchar(30)') AS [Name.Prefix] \r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\";\r\n        (/Resume/Name/Name.First)[1]', 'nvarchar(30)') AS [Name.First] \r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (/Resume/Name/Name.Middle)[1]', 'nvarchar(30)') AS [Name.Middle] \r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (/Resume/Name/Name.Last)[1]', 'nvarchar(30)') AS [Name.Last] \r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (/Resume/Name/Name.Suffix)[1]', 'nvarchar(30)') AS [Name.Suffix] \r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (/Resume/Skills)[1]', 'nvarchar(max)') AS [Skills] \r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Address/Addr.Type)[1]', 'nvarchar(30)') AS [Addr.Type]\r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Address/Addr.Location/Location/Loc.CountryRegion)[1]', 'nvarchar(100)') AS [Addr.Loc.CountryRegion]\r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Address/Addr.Location/Location/Loc.State)[1]', 'nvarchar(100)') AS [Addr.Loc.State]\r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Address/Addr.Location/Location/Loc.City)[1]', 'nvarchar(100)') AS [Addr.Loc.City]\r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Address/Addr.PostalCode)[1]', 'nvarchar(20)') AS [Addr.PostalCode]\r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (/Resume/EMail)[1]', 'nvarchar(max)') AS [EMail] \r\n    ,[Resume].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (/Resume/WebSite)[1]', 'nvarchar(max)') AS [WebSite] \r\n    ,jc.[ModifiedDate] \r\nFROM [HumanResources].[JobCandidate] jc \r\nCROSS APPLY jc.[Resume].nodes(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n    /Resume') AS Resume(ref);\r\n"
+    },
+    {
+      "schema": "HumanResources",
+      "name": "vJobCandidateEducation",
+      "definition": "\r\nCREATE VIEW [HumanResources].[vJobCandidateEducation] \r\nAS \r\nSELECT \r\n    jc.[JobCandidateID] \r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.Level)[1]', 'nvarchar(max)') AS [Edu.Level]\r\n    ,CONVERT(datetime, REPLACE([Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.StartDate)[1]', 'nvarchar(20)') ,'Z', ''), 101) AS [Edu.StartDate] \r\n    ,CONVERT(datetime, REPLACE([Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.EndDate)[1]', 'nvarchar(20)') ,'Z', ''), 101) AS [Edu.EndDate] \r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.Degree)[1]', 'nvarchar(50)') AS [Edu.Degree]\r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.Major)[1]', 'nvarchar(50)') AS [Edu.Major]\r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.Minor)[1]', 'nvarchar(50)') AS [Edu.Minor]\r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.GPA)[1]', 'nvarchar(5)') AS [Edu.GPA]\r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.GPAScale)[1]', 'nvarchar(5)') AS [Edu.GPAScale]\r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.School)[1]', 'nvarchar(100)') AS [Edu.School]\r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.Location/Location/Loc.CountryRegion)[1]', 'nvarchar(100)') AS [Edu.Loc.CountryRegion]\r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.Location/Location/Loc.State)[1]', 'nvarchar(100)') AS [Edu.Loc.State]\r\n    ,[Education].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Edu.Location/Location/Loc.City)[1]', 'nvarchar(100)') AS [Edu.Loc.City]\r\nFROM [HumanResources].[JobCandidate] jc \r\nCROSS APPLY jc.[Resume].nodes(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n    /Resume/Education') AS [Education](ref);\r\n"
+    },
+    {
+      "schema": "HumanResources",
+      "name": "vJobCandidateEmployment",
+      "definition": "\r\nCREATE VIEW [HumanResources].[vJobCandidateEmployment] \r\nAS \r\nSELECT \r\n    jc.[JobCandidateID] \r\n    ,CONVERT(datetime, REPLACE([Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.StartDate)[1]', 'nvarchar(20)') ,'Z', ''), 101) AS [Emp.StartDate] \r\n    ,CONVERT(datetime, REPLACE([Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.EndDate)[1]', 'nvarchar(20)') ,'Z', ''), 101) AS [Emp.EndDate] \r\n    ,[Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.OrgName)[1]', 'nvarchar(100)') AS [Emp.OrgName]\r\n    ,[Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.JobTitle)[1]', 'nvarchar(100)') AS [Emp.JobTitle]\r\n    ,[Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.Responsibility)[1]', 'nvarchar(max)') AS [Emp.Responsibility]\r\n    ,[Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.FunctionCategory)[1]', 'nvarchar(max)') AS [Emp.FunctionCategory]\r\n    ,[Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.IndustryCategory)[1]', 'nvarchar(max)') AS [Emp.IndustryCategory]\r\n    ,[Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.Location/Location/Loc.CountryRegion)[1]', 'nvarchar(max)') AS [Emp.Loc.CountryRegion]\r\n    ,[Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.Location/Location/Loc.State)[1]', 'nvarchar(max)') AS [Emp.Loc.State]\r\n    ,[Employment].ref.value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n        (Emp.Location/Location/Loc.City)[1]', 'nvarchar(max)') AS [Emp.Loc.City]\r\nFROM [HumanResources].[JobCandidate] jc \r\nCROSS APPLY jc.[Resume].nodes(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/Resume\"; \r\n    /Resume/Employment') AS Employment(ref);\r\n"
+    },
+    {
+      "schema": "HumanResources",
+      "name": "vw_DepartmentHeadcount",
+      "definition": "\r\nCREATE   VIEW HumanResources.vw_DepartmentHeadcount AS\r\nSELECT d.Name      AS Department,\r\n       d.GroupName,\r\n       COUNT(*)    AS Headcount,\r\n       STRING_AGG(CAST(CONCAT(pp.FirstName, ' ', pp.LastName) AS nvarchar(max)), ', ')\r\n                   AS Employees\r\nFROM (SELECT edh.BusinessEntityID, edh.DepartmentID\r\n      FROM HumanResources.EmployeeDepartmentHistory AS edh\r\n      WHERE edh.EndDate IS NULL) AS cur\r\nJOIN HumanResources.Department AS d  ON d.DepartmentID = cur.DepartmentID\r\nJOIN Person.Person             AS pp ON pp.BusinessEntityID = cur.BusinessEntityID\r\nGROUP BY d.Name, d.GroupName;\r\n"
+    },
+    {
+      "schema": "HumanResources",
+      "name": "vw_SalesStaffPerformance",
+      "definition": "\r\nCREATE   VIEW HumanResources.vw_SalesStaffPerformance AS\r\nSELECT e.BusinessEntityID                        AS EmployeeID,\r\n       CONCAT(pp.FirstName, ' ', pp.LastName)    AS EmployeeName,\r\n       e.JobTitle,\r\n       DATEDIFF(YEAR, e.HireDate, '2014-12-31')  AS YearsAtCompany,\r\n       st.Name                                   AS Territory,\r\n       sp.SalesQuota,\r\n       sp.SalesYTD,\r\n       sp.Bonus,\r\n       RANK() OVER (ORDER BY sp.SalesYTD DESC)   AS SalesRank\r\nFROM HumanResources.Employee   AS e\r\nJOIN Sales.SalesPerson         AS sp ON sp.BusinessEntityID = e.BusinessEntityID\r\nJOIN Person.Person             AS pp ON pp.BusinessEntityID = e.BusinessEntityID\r\nLEFT JOIN Sales.SalesTerritory AS st ON st.TerritoryID = sp.TerritoryID;\r\n"
+    },
+    {
+      "schema": "Person",
+      "name": "vAdditionalContactInfo",
+      "definition": "\r\nCREATE VIEW [Person].[vAdditionalContactInfo] \r\nAS \r\nSELECT \r\n    [BusinessEntityID] \r\n    ,[FirstName]\r\n    ,[MiddleName]\r\n    ,[LastName]\r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:telephoneNumber)[1]/act:number', 'nvarchar(50)') AS [TelephoneNumber] \r\n    ,LTRIM(RTRIM([ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:telephoneNumber/act:SpecialInstructions/text())[1]', 'nvarchar(max)'))) AS [TelephoneSpecialInstructions] \r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\";\r\n        (act:homePostalAddress/act:Street)[1]', 'nvarchar(50)') AS [Street] \r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:homePostalAddress/act:City)[1]', 'nvarchar(50)') AS [City] \r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:homePostalAddress/act:StateProvince)[1]', 'nvarchar(50)') AS [StateProvince] \r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:homePostalAddress/act:PostalCode)[1]', 'nvarchar(50)') AS [PostalCode] \r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:homePostalAddress/act:CountryRegion)[1]', 'nvarchar(50)') AS [CountryRegion] \r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:homePostalAddress/act:SpecialInstructions/text())[1]', 'nvarchar(max)') AS [HomeAddressSpecialInstructions] \r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:eMail/act:eMailAddress)[1]', 'nvarchar(128)') AS [EMailAddress] \r\n    ,LTRIM(RTRIM([ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:eMail/act:SpecialInstructions/text())[1]', 'nvarchar(max)'))) AS [EMailSpecialInstructions] \r\n    ,[ContactInfo].ref.value(N'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n        declare namespace act=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactTypes\"; \r\n        (act:eMail/act:SpecialInstructions/act:telephoneNumber/act:number)[1]', 'nvarchar(50)') AS [EMailTelephoneNumber] \r\n    ,[rowguid] \r\n    ,[ModifiedDate]\r\nFROM [Person].[Person]\r\nOUTER APPLY [AdditionalContactInfo].nodes(\r\n    'declare namespace ci=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ContactInfo\"; \r\n    /ci:AdditionalContactInfo') AS ContactInfo(ref) \r\nWHERE [AdditionalContactInfo] IS NOT NULL;\r\n"
+    },
+    {
+      "schema": "Person",
+      "name": "vStateProvinceCountryRegion",
+      "definition": "\r\nCREATE VIEW [Person].[vStateProvinceCountryRegion] \r\nWITH SCHEMABINDING \r\nAS \r\nSELECT \r\n    sp.[StateProvinceID] \r\n    ,sp.[StateProvinceCode] \r\n    ,sp.[IsOnlyStateProvinceFlag] \r\n    ,sp.[Name] AS [StateProvinceName] \r\n    ,sp.[TerritoryID] \r\n    ,cr.[CountryRegionCode] \r\n    ,cr.[Name] AS [CountryRegionName]\r\nFROM [Person].[StateProvince] sp \r\n    INNER JOIN [Person].[CountryRegion] cr \r\n    ON sp.[CountryRegionCode] = cr.[CountryRegionCode];\r\n"
+    },
+    {
+      "schema": "Production",
+      "name": "vProductAndDescription",
+      "definition": "\r\nCREATE VIEW [Production].[vProductAndDescription] \r\nWITH SCHEMABINDING \r\nAS \r\n-- View (indexed or standard) to display products and product descriptions by language.\r\nSELECT \r\n    p.[ProductID] \r\n    ,p.[Name] \r\n    ,pm.[Name] AS [ProductModel] \r\n    ,pmx.[CultureID] \r\n    ,pd.[Description] \r\nFROM [Production].[Product] p \r\n    INNER JOIN [Production].[ProductModel] pm \r\n    ON p.[ProductModelID] = pm.[ProductModelID] \r\n    INNER JOIN [Production].[ProductModelProductDescriptionCulture] pmx \r\n    ON pm.[ProductModelID] = pmx.[ProductModelID] \r\n    INNER JOIN [Production].[ProductDescription] pd \r\n    ON pmx.[ProductDescriptionID] = pd.[ProductDescriptionID];\r\n"
+    },
+    {
+      "schema": "Production",
+      "name": "vProductModelCatalogDescription",
+      "definition": "\r\nCREATE VIEW [Production].[vProductModelCatalogDescription] \r\nAS \r\nSELECT \r\n    [ProductModelID] \r\n    ,[Name] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace html=\"http://www.w3.org/1999/xhtml\"; \r\n        (/p1:ProductDescription/p1:Summary/html:p)[1]', 'nvarchar(max)') AS [Summary] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Manufacturer/p1:Name)[1]', 'nvarchar(max)') AS [Manufacturer] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Manufacturer/p1:Copyright)[1]', 'nvarchar(30)') AS [Copyright] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Manufacturer/p1:ProductURL)[1]', 'nvarchar(256)') AS [ProductURL] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wm=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelWarrAndMain\"; \r\n        (/p1:ProductDescription/p1:Features/wm:Warranty/wm:WarrantyPeriod)[1]', 'nvarchar(256)') AS [WarrantyPeriod] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wm=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelWarrAndMain\"; \r\n        (/p1:ProductDescription/p1:Features/wm:Warranty/wm:Description)[1]', 'nvarchar(256)') AS [WarrantyDescription] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wm=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelWarrAndMain\"; \r\n        (/p1:ProductDescription/p1:Features/wm:Maintenance/wm:NoOfYears)[1]', 'nvarchar(256)') AS [NoOfYears] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wm=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelWarrAndMain\"; \r\n        (/p1:ProductDescription/p1:Features/wm:Maintenance/wm:Description)[1]', 'nvarchar(256)') AS [MaintenanceDescription] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wf=\"http://www.adventure-works.com/schemas/OtherFeatures\"; \r\n        (/p1:ProductDescription/p1:Features/wf:wheel)[1]', 'nvarchar(256)') AS [Wheel] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wf=\"http://www.adventure-works.com/schemas/OtherFeatures\"; \r\n        (/p1:ProductDescription/p1:Features/wf:saddle)[1]', 'nvarchar(256)') AS [Saddle] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wf=\"http://www.adventure-works.com/schemas/OtherFeatures\"; \r\n        (/p1:ProductDescription/p1:Features/wf:pedal)[1]', 'nvarchar(256)') AS [Pedal] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wf=\"http://www.adventure-works.com/schemas/OtherFeatures\"; \r\n        (/p1:ProductDescription/p1:Features/wf:BikeFrame)[1]', 'nvarchar(max)') AS [BikeFrame] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        declare namespace wf=\"http://www.adventure-works.com/schemas/OtherFeatures\"; \r\n        (/p1:ProductDescription/p1:Features/wf:crankset)[1]', 'nvarchar(256)') AS [Crankset] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Picture/p1:Angle)[1]', 'nvarchar(256)') AS [PictureAngle] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Picture/p1:Size)[1]', 'nvarchar(256)') AS [PictureSize] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Picture/p1:ProductPhotoID)[1]', 'nvarchar(256)') AS [ProductPhotoID] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Specifications/Material)[1]', 'nvarchar(256)') AS [Material] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Specifications/Color)[1]', 'nvarchar(256)') AS [Color] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Specifications/ProductLine)[1]', 'nvarchar(256)') AS [ProductLine] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Specifications/Style)[1]', 'nvarchar(256)') AS [Style] \r\n    ,[CatalogDescription].value(N'declare namespace p1=\"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelDescription\"; \r\n        (/p1:ProductDescription/p1:Specifications/RiderExperience)[1]', 'nvarchar(1024)') AS [RiderExperience] \r\n    ,[rowguid] \r\n    ,[ModifiedDate]\r\nFROM [Production].[ProductModel] \r\nWHERE [CatalogDescription] IS NOT NULL;\r\n"
+    },
+    {
+      "schema": "Production",
+      "name": "vProductModelInstructions",
+      "definition": "\r\nCREATE VIEW [Production].[vProductModelInstructions] \r\nAS \r\nSELECT \r\n    [ProductModelID] \r\n    ,[Name] \r\n    ,[Instructions].value(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelManuInstructions\"; \r\n        (/root/text())[1]', 'nvarchar(max)') AS [Instructions] \r\n    ,[MfgInstructions].ref.value('@LocationID[1]', 'int') AS [LocationID] \r\n    ,[MfgInstructions].ref.value('@SetupHours[1]', 'decimal(9, 4)') AS [SetupHours] \r\n    ,[MfgInstructions].ref.value('@MachineHours[1]', 'decimal(9, 4)') AS [MachineHours] \r\n    ,[MfgInstructions].ref.value('@LaborHours[1]', 'decimal(9, 4)') AS [LaborHours] \r\n    ,[MfgInstructions].ref.value('@LotSize[1]', 'int') AS [LotSize] \r\n    ,[Steps].ref.value('string(.)[1]', 'nvarchar(1024)') AS [Step] \r\n    ,[rowguid] \r\n    ,[ModifiedDate]\r\nFROM [Production].[ProductModel] \r\nCROSS APPLY [Instructions].nodes(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelManuInstructions\"; \r\n    /root/Location') MfgInstructions(ref)\r\nCROSS APPLY [MfgInstructions].ref.nodes('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/ProductModelManuInstructions\"; \r\n    step') Steps(ref);\r\n"
+    },
+    {
+      "schema": "Production",
+      "name": "vw_ProductVendors",
+      "definition": "\r\nCREATE   VIEW Production.vw_ProductVendors AS\r\nSELECT p.ProductID,\r\n       p.ProductNumber,\r\n       p.Name               AS Product,\r\n       v.Name               AS Vendor,\r\n       pv.StandardPrice,\r\n       pv.AverageLeadTime   AS LeadTimeDays,\r\n       pv.MinOrderQty,\r\n       CASE WHEN v.PreferredVendorStatus = 1 THEN 'Preferred'\r\n            ELSE 'Standard' END AS VendorStatus,\r\n       v.CreditRating\r\nFROM Production.Product            AS p\r\nLEFT JOIN Purchasing.ProductVendor AS pv ON pv.ProductID = p.ProductID\r\nLEFT JOIN Purchasing.Vendor        AS v  ON v.BusinessEntityID = pv.BusinessEntityID\r\n                                        AND v.ActiveFlag = 1\r\nWHERE p.MakeFlag = 0;\r\n"
+    },
+    {
+      "schema": "Production",
+      "name": "vw_StockAndCheapestVendor",
+      "definition": "\r\nCREATE   VIEW Production.vw_StockAndCheapestVendor AS\r\nSELECT p.ProductNumber,\r\n       p.Name            AS Product,\r\n       p.ReorderPoint,\r\n       SUM(i.Quantity)   AS QuantityInStock,\r\n       CASE WHEN SUM(i.Quantity) < p.ReorderPoint THEN 'Reorder'\r\n            ELSE 'OK' END AS StockStatus,\r\n       v.Name            AS CheapestVendor,\r\n       pv.StandardPrice\r\nFROM Production.Product          AS p\r\nJOIN Production.ProductInventory AS i  ON i.ProductID = p.ProductID\r\nJOIN Purchasing.ProductVendor    AS pv ON pv.ProductID = p.ProductID\r\nJOIN Purchasing.Vendor           AS v  ON v.BusinessEntityID = pv.BusinessEntityID\r\nWHERE pv.StandardPrice = (SELECT MIN(pv2.StandardPrice)\r\n                          FROM Purchasing.ProductVendor AS pv2\r\n                          WHERE pv2.ProductID = p.ProductID)\r\nGROUP BY p.ProductNumber, p.Name, p.ReorderPoint, v.Name, pv.StandardPrice;\r\n"
+    },
+    {
+      "schema": "Purchasing",
+      "name": "vVendorWithAddresses",
+      "definition": "\r\nCREATE VIEW [Purchasing].[vVendorWithAddresses] AS \r\nSELECT \r\n    v.[BusinessEntityID]\r\n    ,v.[Name]\r\n    ,at.[Name] AS [AddressType]\r\n    ,a.[AddressLine1] \r\n    ,a.[AddressLine2] \r\n    ,a.[City] \r\n    ,sp.[Name] AS [StateProvinceName] \r\n    ,a.[PostalCode] \r\n    ,cr.[Name] AS [CountryRegionName] \r\nFROM [Purchasing].[Vendor] v\r\n    INNER JOIN [Person].[BusinessEntityAddress] bea \r\n    ON bea.[BusinessEntityID] = v.[BusinessEntityID] \r\n    INNER JOIN [Person].[Address] a \r\n    ON a.[AddressID] = bea.[AddressID]\r\n    INNER JOIN [Person].[StateProvince] sp \r\n    ON sp.[StateProvinceID] = a.[StateProvinceID]\r\n    INNER JOIN [Person].[CountryRegion] cr \r\n    ON cr.[CountryRegionCode] = sp.[CountryRegionCode]\r\n    INNER JOIN [Person].[AddressType] at \r\n    ON at.[AddressTypeID] = bea.[AddressTypeID];\r\n"
+    },
+    {
+      "schema": "Purchasing",
+      "name": "vVendorWithContacts",
+      "definition": "\r\nCREATE VIEW [Purchasing].[vVendorWithContacts] AS \r\nSELECT \r\n    v.[BusinessEntityID]\r\n    ,v.[Name]\r\n    ,ct.[Name] AS [ContactType] \r\n    ,p.[Title] \r\n    ,p.[FirstName] \r\n    ,p.[MiddleName] \r\n    ,p.[LastName] \r\n    ,p.[Suffix] \r\n    ,pp.[PhoneNumber] \r\n\t,pnt.[Name] AS [PhoneNumberType]\r\n    ,ea.[EmailAddress] \r\n    ,p.[EmailPromotion] \r\nFROM [Purchasing].[Vendor] v\r\n    INNER JOIN [Person].[BusinessEntityContact] bec \r\n    ON bec.[BusinessEntityID] = v.[BusinessEntityID]\r\n\tINNER JOIN [Person].ContactType ct\r\n\tON ct.[ContactTypeID] = bec.[ContactTypeID]\r\n\tINNER JOIN [Person].[Person] p\r\n\tON p.[BusinessEntityID] = bec.[PersonID]\r\n\tLEFT OUTER JOIN [Person].[EmailAddress] ea\r\n\tON ea.[BusinessEntityID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[PersonPhone] pp\r\n\tON pp.[BusinessEntityID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[PhoneNumberType] pnt\r\n\tON pnt.[PhoneNumberTypeID] = pp.[PhoneNumberTypeID];\r\n"
+    },
+    {
+      "schema": "Purchasing",
+      "name": "vw_PurchaseCostVsListPrice",
+      "definition": "\r\nCREATE   VIEW Purchasing.vw_PurchaseCostVsListPrice AS\r\nWITH Purchases AS (\r\n    SELECT pod.ProductID,\r\n           AVG(pod.UnitPrice)   AS AvgPurchasePrice,\r\n           SUM(pod.ReceivedQty) AS UnitsReceived\r\n    FROM Purchasing.PurchaseOrderDetail AS pod\r\n    GROUP BY pod.ProductID\r\n)\r\nSELECT p.ProductNumber,\r\n       p.Name                            AS Product,\r\n       p.StandardCost,\r\n       p.ListPrice,\r\n       pu.AvgPurchasePrice,\r\n       pu.UnitsReceived,\r\n       p.ListPrice - pu.AvgPurchasePrice AS MarginPerUnit\r\nFROM Purchases          AS pu\r\nJOIN Production.Product AS p ON p.ProductID = pu.ProductID\r\nWHERE p.MakeFlag = 0;\r\n"
+    },
+    {
+      "schema": "Purchasing",
+      "name": "vw_PurchasingStaffOrders",
+      "definition": "\r\nCREATE   VIEW Purchasing.vw_PurchasingStaffOrders AS\r\nSELECT e.BusinessEntityID                     AS EmployeeID,\r\n       CONCAT(pp.FirstName, ' ', pp.LastName) AS EmployeeName,\r\n       e.JobTitle,\r\n       COUNT(poh.PurchaseOrderID)             AS PurchaseOrders,\r\n       SUM(poh.TotalDue)                      AS TotalSpent,\r\n       MAX(poh.OrderDate)                     AS LastOrderDate\r\nFROM Purchasing.PurchaseOrderHeader AS poh\r\nJOIN HumanResources.Employee        AS e  ON e.BusinessEntityID = poh.EmployeeID\r\nJOIN Person.Person                  AS pp ON pp.BusinessEntityID = e.BusinessEntityID\r\nGROUP BY e.BusinessEntityID, pp.FirstName, pp.LastName, e.JobTitle;\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vIndividualCustomer",
+      "definition": "\r\nCREATE VIEW [Sales].[vIndividualCustomer] \r\nAS \r\nSELECT \r\n    p.[BusinessEntityID]\r\n    ,p.[Title]\r\n    ,p.[FirstName]\r\n    ,p.[MiddleName]\r\n    ,p.[LastName]\r\n    ,p.[Suffix]\r\n    ,pp.[PhoneNumber]\r\n\t,pnt.[Name] AS [PhoneNumberType]\r\n    ,ea.[EmailAddress]\r\n    ,p.[EmailPromotion]\r\n    ,at.[Name] AS [AddressType]\r\n    ,a.[AddressLine1]\r\n    ,a.[AddressLine2]\r\n    ,a.[City]\r\n    ,[StateProvinceName] = sp.[Name]\r\n    ,a.[PostalCode]\r\n    ,[CountryRegionName] = cr.[Name]\r\n    ,p.[Demographics]\r\nFROM [Person].[Person] p\r\n    INNER JOIN [Person].[BusinessEntityAddress] bea \r\n    ON bea.[BusinessEntityID] = p.[BusinessEntityID] \r\n    INNER JOIN [Person].[Address] a \r\n    ON a.[AddressID] = bea.[AddressID]\r\n    INNER JOIN [Person].[StateProvince] sp \r\n    ON sp.[StateProvinceID] = a.[StateProvinceID]\r\n    INNER JOIN [Person].[CountryRegion] cr \r\n    ON cr.[CountryRegionCode] = sp.[CountryRegionCode]\r\n    INNER JOIN [Person].[AddressType] at \r\n    ON at.[AddressTypeID] = bea.[AddressTypeID]\r\n\tINNER JOIN [Sales].[Customer] c\r\n\tON c.[PersonID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[EmailAddress] ea\r\n\tON ea.[BusinessEntityID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[PersonPhone] pp\r\n\tON pp.[BusinessEntityID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[PhoneNumberType] pnt\r\n\tON pnt.[PhoneNumberTypeID] = pp.[PhoneNumberTypeID]\r\nWHERE c.StoreID IS NULL;\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vPersonDemographics",
+      "definition": "\r\nCREATE VIEW [Sales].[vPersonDemographics] \r\nAS \r\nSELECT \r\n    p.[BusinessEntityID] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        TotalPurchaseYTD[1]', 'money') AS [TotalPurchaseYTD] \r\n    ,CONVERT(datetime, REPLACE([IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        DateFirstPurchase[1]', 'nvarchar(20)') ,'Z', ''), 101) AS [DateFirstPurchase] \r\n    ,CONVERT(datetime, REPLACE([IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        BirthDate[1]', 'nvarchar(20)') ,'Z', ''), 101) AS [BirthDate] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        MaritalStatus[1]', 'nvarchar(1)') AS [MaritalStatus] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        YearlyIncome[1]', 'nvarchar(30)') AS [YearlyIncome] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        Gender[1]', 'nvarchar(1)') AS [Gender] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        TotalChildren[1]', 'integer') AS [TotalChildren] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        NumberChildrenAtHome[1]', 'integer') AS [NumberChildrenAtHome] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        Education[1]', 'nvarchar(30)') AS [Education] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        Occupation[1]', 'nvarchar(30)') AS [Occupation] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        HomeOwnerFlag[1]', 'bit') AS [HomeOwnerFlag] \r\n    ,[IndividualSurvey].[ref].[value](N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n        NumberCarsOwned[1]', 'integer') AS [NumberCarsOwned] \r\nFROM [Person].[Person] p \r\nCROSS APPLY p.[Demographics].nodes(N'declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/IndividualSurvey\"; \r\n    /IndividualSurvey') AS [IndividualSurvey](ref) \r\nWHERE [Demographics] IS NOT NULL;\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vSalesPerson",
+      "definition": "\r\nCREATE VIEW [Sales].[vSalesPerson] \r\nAS \r\nSELECT \r\n    s.[BusinessEntityID]\r\n    ,p.[Title]\r\n    ,p.[FirstName]\r\n    ,p.[MiddleName]\r\n    ,p.[LastName]\r\n    ,p.[Suffix]\r\n    ,e.[JobTitle]\r\n    ,pp.[PhoneNumber]\r\n\t,pnt.[Name] AS [PhoneNumberType]\r\n    ,ea.[EmailAddress]\r\n    ,p.[EmailPromotion]\r\n    ,a.[AddressLine1]\r\n    ,a.[AddressLine2]\r\n    ,a.[City]\r\n    ,[StateProvinceName] = sp.[Name]\r\n    ,a.[PostalCode]\r\n    ,[CountryRegionName] = cr.[Name]\r\n    ,[TerritoryName] = st.[Name]\r\n    ,[TerritoryGroup] = st.[Group]\r\n    ,s.[SalesQuota]\r\n    ,s.[SalesYTD]\r\n    ,s.[SalesLastYear]\r\nFROM [Sales].[SalesPerson] s\r\n    INNER JOIN [HumanResources].[Employee] e \r\n    ON e.[BusinessEntityID] = s.[BusinessEntityID]\r\n\tINNER JOIN [Person].[Person] p\r\n\tON p.[BusinessEntityID] = s.[BusinessEntityID]\r\n    INNER JOIN [Person].[BusinessEntityAddress] bea \r\n    ON bea.[BusinessEntityID] = s.[BusinessEntityID] \r\n    INNER JOIN [Person].[Address] a \r\n    ON a.[AddressID] = bea.[AddressID]\r\n    INNER JOIN [Person].[StateProvince] sp \r\n    ON sp.[StateProvinceID] = a.[StateProvinceID]\r\n    INNER JOIN [Person].[CountryRegion] cr \r\n    ON cr.[CountryRegionCode] = sp.[CountryRegionCode]\r\n    LEFT OUTER JOIN [Sales].[SalesTerritory] st \r\n    ON st.[TerritoryID] = s.[TerritoryID]\r\n\tLEFT OUTER JOIN [Person].[EmailAddress] ea\r\n\tON ea.[BusinessEntityID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[PersonPhone] pp\r\n\tON pp.[BusinessEntityID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[PhoneNumberType] pnt\r\n\tON pnt.[PhoneNumberTypeID] = pp.[PhoneNumberTypeID];\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vSalesPersonSalesByFiscalYears",
+      "definition": "\r\nCREATE VIEW [Sales].[vSalesPersonSalesByFiscalYears] \r\nAS \r\nSELECT \r\n    pvt.[SalesPersonID]\r\n    ,pvt.[FullName]\r\n    ,pvt.[JobTitle]\r\n    ,pvt.[SalesTerritory]\r\n    ,pvt.[2002]\r\n    ,pvt.[2003]\r\n    ,pvt.[2004] \r\nFROM (SELECT \r\n        soh.[SalesPersonID]\r\n        ,p.[FirstName] + ' ' + COALESCE(p.[MiddleName], '') + ' ' + p.[LastName] AS [FullName]\r\n        ,e.[JobTitle]\r\n        ,st.[Name] AS [SalesTerritory]\r\n        ,soh.[SubTotal]\r\n        ,YEAR(DATEADD(m, 6, soh.[OrderDate])) AS [FiscalYear] \r\n    FROM [Sales].[SalesPerson] sp \r\n        INNER JOIN [Sales].[SalesOrderHeader] soh \r\n        ON sp.[BusinessEntityID] = soh.[SalesPersonID]\r\n        INNER JOIN [Sales].[SalesTerritory] st \r\n        ON sp.[TerritoryID] = st.[TerritoryID] \r\n        INNER JOIN [HumanResources].[Employee] e \r\n        ON soh.[SalesPersonID] = e.[BusinessEntityID] \r\n\t\tINNER JOIN [Person].[Person] p\r\n\t\tON p.[BusinessEntityID] = sp.[BusinessEntityID]\r\n\t ) AS soh \r\nPIVOT \r\n(\r\n    SUM([SubTotal]) \r\n    FOR [FiscalYear] \r\n    IN ([2002], [2003], [2004])\r\n) AS pvt;\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vStoreWithAddresses",
+      "definition": "\r\nCREATE VIEW [Sales].[vStoreWithAddresses] AS \r\nSELECT \r\n    s.[BusinessEntityID] \r\n    ,s.[Name] \r\n    ,at.[Name] AS [AddressType]\r\n    ,a.[AddressLine1] \r\n    ,a.[AddressLine2] \r\n    ,a.[City] \r\n    ,sp.[Name] AS [StateProvinceName] \r\n    ,a.[PostalCode] \r\n    ,cr.[Name] AS [CountryRegionName] \r\nFROM [Sales].[Store] s\r\n    INNER JOIN [Person].[BusinessEntityAddress] bea \r\n    ON bea.[BusinessEntityID] = s.[BusinessEntityID] \r\n    INNER JOIN [Person].[Address] a \r\n    ON a.[AddressID] = bea.[AddressID]\r\n    INNER JOIN [Person].[StateProvince] sp \r\n    ON sp.[StateProvinceID] = a.[StateProvinceID]\r\n    INNER JOIN [Person].[CountryRegion] cr \r\n    ON cr.[CountryRegionCode] = sp.[CountryRegionCode]\r\n    INNER JOIN [Person].[AddressType] at \r\n    ON at.[AddressTypeID] = bea.[AddressTypeID];\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vStoreWithContacts",
+      "definition": "\r\nCREATE VIEW [Sales].[vStoreWithContacts] AS \r\nSELECT \r\n    s.[BusinessEntityID] \r\n    ,s.[Name] \r\n    ,ct.[Name] AS [ContactType] \r\n    ,p.[Title] \r\n    ,p.[FirstName] \r\n    ,p.[MiddleName] \r\n    ,p.[LastName] \r\n    ,p.[Suffix] \r\n    ,pp.[PhoneNumber] \r\n\t,pnt.[Name] AS [PhoneNumberType]\r\n    ,ea.[EmailAddress] \r\n    ,p.[EmailPromotion] \r\nFROM [Sales].[Store] s\r\n    INNER JOIN [Person].[BusinessEntityContact] bec \r\n    ON bec.[BusinessEntityID] = s.[BusinessEntityID]\r\n\tINNER JOIN [Person].[ContactType] ct\r\n\tON ct.[ContactTypeID] = bec.[ContactTypeID]\r\n\tINNER JOIN [Person].[Person] p\r\n\tON p.[BusinessEntityID] = bec.[PersonID]\r\n\tLEFT OUTER JOIN [Person].[EmailAddress] ea\r\n\tON ea.[BusinessEntityID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[PersonPhone] pp\r\n\tON pp.[BusinessEntityID] = p.[BusinessEntityID]\r\n\tLEFT OUTER JOIN [Person].[PhoneNumberType] pnt\r\n\tON pnt.[PhoneNumberTypeID] = pp.[PhoneNumberTypeID];\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vStoreWithDemographics",
+      "definition": "\r\nCREATE VIEW [Sales].[vStoreWithDemographics] AS \r\nSELECT \r\n    s.[BusinessEntityID] \r\n    ,s.[Name] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/AnnualSales)[1]', 'money') AS [AnnualSales] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/AnnualRevenue)[1]', 'money') AS [AnnualRevenue] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/BankName)[1]', 'nvarchar(50)') AS [BankName] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/BusinessType)[1]', 'nvarchar(5)') AS [BusinessType] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/YearOpened)[1]', 'integer') AS [YearOpened] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/Specialty)[1]', 'nvarchar(50)') AS [Specialty] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/SquareFeet)[1]', 'integer') AS [SquareFeet] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/Brands)[1]', 'nvarchar(30)') AS [Brands] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/Internet)[1]', 'nvarchar(30)') AS [Internet] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/NumberEmployees)[1]', 'integer') AS [NumberEmployees] \r\nFROM [Sales].[Store] s;\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vw_ProductSalesByTerritory",
+      "definition": "\r\nCREATE   VIEW Sales.vw_ProductSalesByTerritory AS\r\nSELECT t.Name            AS Territory,\r\n       t.[Group]         AS Region,\r\n       p.ProductNumber,\r\n       p.Name            AS Product,\r\n       p.Color,\r\n       SUM(d.OrderQty)   AS UnitsSold,\r\n       SUM(d.LineTotal)  AS Revenue\r\nFROM Sales.SalesOrderDetail  AS d\r\nJOIN Sales.SalesOrderHeader  AS h ON h.SalesOrderID = d.SalesOrderID\r\nJOIN Sales.SalesTerritory    AS t ON t.TerritoryID = h.TerritoryID\r\nJOIN Production.Product      AS p ON p.ProductID = d.ProductID\r\nWHERE p.FinishedGoodsFlag = 1\r\nGROUP BY t.Name, t.[Group], p.ProductNumber, p.Name, p.Color;\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vw_RevenueByCategory",
+      "definition": "\r\nCREATE   VIEW Sales.vw_RevenueByCategory AS\r\nSELECT pc.Name                        AS Category,\r\n       YEAR(h.OrderDate)              AS OrderYear,\r\n       COUNT(DISTINCT h.SalesOrderID) AS Orders,\r\n       SUM(d.OrderQty)                AS UnitsSold,\r\n       SUM(d.LineTotal)               AS Revenue\r\nFROM Sales.SalesOrderHeader        AS h\r\nJOIN Sales.SalesOrderDetail        AS d  ON d.SalesOrderID = h.SalesOrderID\r\nJOIN Production.Product            AS p  ON p.ProductID = d.ProductID\r\nJOIN Production.ProductSubcategory AS ps ON ps.ProductSubcategoryID = p.ProductSubcategoryID\r\nJOIN Production.ProductCategory    AS pc ON pc.ProductCategoryID = ps.ProductCategoryID\r\nGROUP BY pc.Name, YEAR(h.OrderDate);\r\n"
+    }
+  ],
+  "objects": {
+    "dbo.AWBuildVersion": {
+      "kind": "table",
+      "columns": {
+        "SystemInformationID": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "Database Version": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "VersionDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "dbo.DatabaseLog": {
+      "kind": "table",
+      "columns": {
+        "DatabaseLogID": {
+          "type": "int",
+          "nullable": false
+        },
+        "PostTime": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "DatabaseUser": {
+          "type": "nvarchar(128)",
+          "nullable": false
+        },
+        "Event": {
+          "type": "nvarchar(128)",
+          "nullable": false
+        },
+        "Schema": {
+          "type": "nvarchar(128)",
+          "nullable": true
+        },
+        "Object": {
+          "type": "nvarchar(128)",
+          "nullable": true
+        },
+        "TSQL": {
+          "type": "nvarchar(max)",
+          "nullable": false
+        },
+        "XmlEvent": {
+          "type": "xml(max)",
+          "nullable": false
+        }
+      }
+    },
+    "dbo.ErrorLog": {
+      "kind": "table",
+      "columns": {
+        "ErrorLogID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ErrorTime": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "UserName": {
+          "type": "nvarchar(128)",
+          "nullable": false
+        },
+        "ErrorNumber": {
+          "type": "int",
+          "nullable": false
+        },
+        "ErrorSeverity": {
+          "type": "int",
+          "nullable": true
+        },
+        "ErrorState": {
+          "type": "int",
+          "nullable": true
+        },
+        "ErrorProcedure": {
+          "type": "nvarchar(126)",
+          "nullable": true
+        },
+        "ErrorLine": {
+          "type": "int",
+          "nullable": true
+        },
+        "ErrorMessage": {
+          "type": "nvarchar(4000)",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.Department": {
+      "kind": "table",
+      "columns": {
+        "DepartmentID": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "GroupName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.Employee": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "NationalIDNumber": {
+          "type": "nvarchar(15)",
+          "nullable": false
+        },
+        "LoginID": {
+          "type": "nvarchar(256)",
+          "nullable": false
+        },
+        "OrganizationNode": {
+          "type": "hierarchyid(892)",
+          "nullable": true
+        },
+        "OrganizationLevel": {
+          "type": "smallint",
+          "nullable": true
+        },
+        "JobTitle": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "BirthDate": {
+          "type": "date",
+          "nullable": false
+        },
+        "MaritalStatus": {
+          "type": "nchar(1)",
+          "nullable": false
+        },
+        "Gender": {
+          "type": "nchar(1)",
+          "nullable": false
+        },
+        "HireDate": {
+          "type": "date",
+          "nullable": false
+        },
+        "SalariedFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "VacationHours": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "SickLeaveHours": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "CurrentFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.EmployeeDepartmentHistory": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "DepartmentID": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "ShiftID": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "date",
+          "nullable": false
+        },
+        "EndDate": {
+          "type": "date",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.EmployeePayHistory": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "RateChangeDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "Rate": {
+          "type": "money",
+          "nullable": false
+        },
+        "PayFrequency": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.JobCandidate": {
+      "kind": "table",
+      "columns": {
+        "JobCandidateID": {
+          "type": "int",
+          "nullable": false
+        },
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": true
+        },
+        "Resume": {
+          "type": "xml(max)",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.Shift": {
+      "kind": "table",
+      "columns": {
+        "ShiftID": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "StartTime": {
+          "type": "time",
+          "nullable": false
+        },
+        "EndTime": {
+          "type": "time",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.vEmployee": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Title": {
+          "type": "nvarchar(8)",
+          "nullable": true
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Suffix": {
+          "type": "nvarchar(10)",
+          "nullable": true
+        },
+        "JobTitle": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "PhoneNumber": {
+          "type": "nvarchar(25)",
+          "nullable": true
+        },
+        "PhoneNumberType": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailAddress": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailPromotion": {
+          "type": "int",
+          "nullable": false
+        },
+        "AddressLine1": {
+          "type": "nvarchar(60)",
+          "nullable": false
+        },
+        "AddressLine2": {
+          "type": "nvarchar(60)",
+          "nullable": true
+        },
+        "City": {
+          "type": "nvarchar(30)",
+          "nullable": false
+        },
+        "StateProvinceName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "PostalCode": {
+          "type": "nvarchar(15)",
+          "nullable": false
+        },
+        "CountryRegionName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "AdditionalContactInfo": {
+          "type": "xml(max)",
+          "nullable": true
+        }
+      }
+    },
+    "HumanResources.vEmployeeDepartment": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Title": {
+          "type": "nvarchar(8)",
+          "nullable": true
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Suffix": {
+          "type": "nvarchar(10)",
+          "nullable": true
+        },
+        "JobTitle": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Department": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "GroupName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "date",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.vEmployeeDepartmentHistory": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Title": {
+          "type": "nvarchar(8)",
+          "nullable": true
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Suffix": {
+          "type": "nvarchar(10)",
+          "nullable": true
+        },
+        "Shift": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Department": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "GroupName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "date",
+          "nullable": false
+        },
+        "EndDate": {
+          "type": "date",
+          "nullable": true
+        }
+      }
+    },
+    "HumanResources.vJobCandidate": {
+      "kind": "view",
+      "columns": {
+        "JobCandidateID": {
+          "type": "int",
+          "nullable": false
+        },
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": true
+        },
+        "Name.Prefix": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Name.First": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Name.Middle": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Name.Last": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Name.Suffix": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Skills": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Addr.Type": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Addr.Loc.CountryRegion": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        },
+        "Addr.Loc.State": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        },
+        "Addr.Loc.City": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        },
+        "Addr.PostalCode": {
+          "type": "nvarchar(20)",
+          "nullable": true
+        },
+        "EMail": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "WebSite": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "HumanResources.vJobCandidateEducation": {
+      "kind": "view",
+      "columns": {
+        "JobCandidateID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Edu.Level": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Edu.StartDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "Edu.EndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "Edu.Degree": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "Edu.Major": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "Edu.Minor": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "Edu.GPA": {
+          "type": "nvarchar(5)",
+          "nullable": true
+        },
+        "Edu.GPAScale": {
+          "type": "nvarchar(5)",
+          "nullable": true
+        },
+        "Edu.School": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        },
+        "Edu.Loc.CountryRegion": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        },
+        "Edu.Loc.State": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        },
+        "Edu.Loc.City": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        }
+      }
+    },
+    "HumanResources.vJobCandidateEmployment": {
+      "kind": "view",
+      "columns": {
+        "JobCandidateID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Emp.StartDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "Emp.EndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "Emp.OrgName": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        },
+        "Emp.JobTitle": {
+          "type": "nvarchar(100)",
+          "nullable": true
+        },
+        "Emp.Responsibility": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Emp.FunctionCategory": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Emp.IndustryCategory": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Emp.Loc.CountryRegion": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Emp.Loc.State": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Emp.Loc.City": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        }
+      }
+    },
+    "HumanResources.vw_DepartmentHeadcount": {
+      "kind": "view",
+      "columns": {
+        "Department": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "GroupName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Headcount": {
+          "type": "int",
+          "nullable": true
+        },
+        "Employees": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        }
+      }
+    },
+    "HumanResources.vw_SalesStaffPerformance": {
+      "kind": "view",
+      "columns": {
+        "EmployeeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "EmployeeName": {
+          "type": "nvarchar(101)",
+          "nullable": false
+        },
+        "JobTitle": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "YearsAtCompany": {
+          "type": "int",
+          "nullable": true
+        },
+        "Territory": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "SalesQuota": {
+          "type": "money",
+          "nullable": true
+        },
+        "SalesYTD": {
+          "type": "money",
+          "nullable": false
+        },
+        "Bonus": {
+          "type": "money",
+          "nullable": false
+        },
+        "SalesRank": {
+          "type": "bigint",
+          "nullable": true
+        }
+      }
+    },
+    "Person.Address": {
+      "kind": "table",
+      "columns": {
+        "AddressID": {
+          "type": "int",
+          "nullable": false
+        },
+        "AddressLine1": {
+          "type": "nvarchar(60)",
+          "nullable": false
+        },
+        "AddressLine2": {
+          "type": "nvarchar(60)",
+          "nullable": true
+        },
+        "City": {
+          "type": "nvarchar(30)",
+          "nullable": false
+        },
+        "StateProvinceID": {
+          "type": "int",
+          "nullable": false
+        },
+        "PostalCode": {
+          "type": "nvarchar(15)",
+          "nullable": false
+        },
+        "SpatialLocation": {
+          "type": "geography(max)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.AddressType": {
+      "kind": "table",
+      "columns": {
+        "AddressTypeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.BusinessEntity": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.BusinessEntityAddress": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "AddressID": {
+          "type": "int",
+          "nullable": false
+        },
+        "AddressTypeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.BusinessEntityContact": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "PersonID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ContactTypeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.ContactType": {
+      "kind": "table",
+      "columns": {
+        "ContactTypeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.CountryRegion": {
+      "kind": "table",
+      "columns": {
+        "CountryRegionCode": {
+          "type": "nvarchar(3)",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.EmailAddress": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "EmailAddressID": {
+          "type": "int",
+          "nullable": false
+        },
+        "EmailAddress": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.Password": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "PasswordHash": {
+          "type": "varchar(128)",
+          "nullable": false
+        },
+        "PasswordSalt": {
+          "type": "varchar(10)",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.Person": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "PersonType": {
+          "type": "nchar(2)",
+          "nullable": false
+        },
+        "NameStyle": {
+          "type": "bit",
+          "nullable": false
+        },
+        "Title": {
+          "type": "nvarchar(8)",
+          "nullable": true
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Suffix": {
+          "type": "nvarchar(10)",
+          "nullable": true
+        },
+        "EmailPromotion": {
+          "type": "int",
+          "nullable": false
+        },
+        "AdditionalContactInfo": {
+          "type": "xml(max)",
+          "nullable": true
+        },
+        "Demographics": {
+          "type": "xml(max)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.PersonPhone": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "PhoneNumber": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "PhoneNumberTypeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.PhoneNumberType": {
+      "kind": "table",
+      "columns": {
+        "PhoneNumberTypeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.StateProvince": {
+      "kind": "table",
+      "columns": {
+        "StateProvinceID": {
+          "type": "int",
+          "nullable": false
+        },
+        "StateProvinceCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "CountryRegionCode": {
+          "type": "nvarchar(3)",
+          "nullable": false
+        },
+        "IsOnlyStateProvinceFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "TerritoryID": {
+          "type": "int",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.vAdditionalContactInfo": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "TelephoneNumber": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "TelephoneSpecialInstructions": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Street": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "City": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "StateProvince": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "PostalCode": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "CountryRegion": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "HomeAddressSpecialInstructions": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "EMailAddress": {
+          "type": "nvarchar(128)",
+          "nullable": true
+        },
+        "EMailSpecialInstructions": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "EMailTelephoneNumber": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Person.vStateProvinceCountryRegion": {
+      "kind": "view",
+      "columns": {
+        "StateProvinceID": {
+          "type": "int",
+          "nullable": false
+        },
+        "StateProvinceCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "IsOnlyStateProvinceFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "StateProvinceName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "TerritoryID": {
+          "type": "int",
+          "nullable": false
+        },
+        "CountryRegionCode": {
+          "type": "nvarchar(3)",
+          "nullable": false
+        },
+        "CountryRegionName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        }
+      }
+    },
+    "Production.BillOfMaterials": {
+      "kind": "table",
+      "columns": {
+        "BillOfMaterialsID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductAssemblyID": {
+          "type": "int",
+          "nullable": true
+        },
+        "ComponentID": {
+          "type": "int",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "EndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "UnitMeasureCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "BOMLevel": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "PerAssemblyQty": {
+          "type": "decimal(8,2)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.Culture": {
+      "kind": "table",
+      "columns": {
+        "CultureID": {
+          "type": "nchar(6)",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.Document": {
+      "kind": "table",
+      "columns": {
+        "DocumentNode": {
+          "type": "hierarchyid(892)",
+          "nullable": false
+        },
+        "DocumentLevel": {
+          "type": "smallint",
+          "nullable": true
+        },
+        "Title": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Owner": {
+          "type": "int",
+          "nullable": false
+        },
+        "FolderFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "FileName": {
+          "type": "nvarchar(400)",
+          "nullable": false
+        },
+        "FileExtension": {
+          "type": "nvarchar(8)",
+          "nullable": false
+        },
+        "Revision": {
+          "type": "nchar(5)",
+          "nullable": false
+        },
+        "ChangeNumber": {
+          "type": "int",
+          "nullable": false
+        },
+        "Status": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "DocumentSummary": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Document": {
+          "type": "varbinary(max)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.Illustration": {
+      "kind": "table",
+      "columns": {
+        "IllustrationID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Diagram": {
+          "type": "xml(max)",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.Location": {
+      "kind": "table",
+      "columns": {
+        "LocationID": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "CostRate": {
+          "type": "smallmoney",
+          "nullable": false
+        },
+        "Availability": {
+          "type": "decimal(8,2)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.Product": {
+      "kind": "table",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ProductNumber": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "MakeFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "FinishedGoodsFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "Color": {
+          "type": "nvarchar(15)",
+          "nullable": true
+        },
+        "SafetyStockLevel": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "ReorderPoint": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "StandardCost": {
+          "type": "money",
+          "nullable": false
+        },
+        "ListPrice": {
+          "type": "money",
+          "nullable": false
+        },
+        "Size": {
+          "type": "nvarchar(5)",
+          "nullable": true
+        },
+        "SizeUnitMeasureCode": {
+          "type": "nchar(3)",
+          "nullable": true
+        },
+        "WeightUnitMeasureCode": {
+          "type": "nchar(3)",
+          "nullable": true
+        },
+        "Weight": {
+          "type": "decimal(8,2)",
+          "nullable": true
+        },
+        "DaysToManufacture": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductLine": {
+          "type": "nchar(2)",
+          "nullable": true
+        },
+        "Class": {
+          "type": "nchar(2)",
+          "nullable": true
+        },
+        "Style": {
+          "type": "nchar(2)",
+          "nullable": true
+        },
+        "ProductSubcategoryID": {
+          "type": "int",
+          "nullable": true
+        },
+        "ProductModelID": {
+          "type": "int",
+          "nullable": true
+        },
+        "SellStartDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "SellEndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "DiscontinuedDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductCategory": {
+      "kind": "table",
+      "columns": {
+        "ProductCategoryID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductCostHistory": {
+      "kind": "table",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "EndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "StandardCost": {
+          "type": "money",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductDescription": {
+      "kind": "table",
+      "columns": {
+        "ProductDescriptionID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Description": {
+          "type": "nvarchar(400)",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductDocument": {
+      "kind": "table",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "DocumentNode": {
+          "type": "hierarchyid(892)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductInventory": {
+      "kind": "table",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "LocationID": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "Shelf": {
+          "type": "nvarchar(10)",
+          "nullable": false
+        },
+        "Bin": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "Quantity": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductListPriceHistory": {
+      "kind": "table",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "EndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "ListPrice": {
+          "type": "money",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductModel": {
+      "kind": "table",
+      "columns": {
+        "ProductModelID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "CatalogDescription": {
+          "type": "xml(max)",
+          "nullable": true
+        },
+        "Instructions": {
+          "type": "xml(max)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductModelIllustration": {
+      "kind": "table",
+      "columns": {
+        "ProductModelID": {
+          "type": "int",
+          "nullable": false
+        },
+        "IllustrationID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductModelProductDescriptionCulture": {
+      "kind": "table",
+      "columns": {
+        "ProductModelID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductDescriptionID": {
+          "type": "int",
+          "nullable": false
+        },
+        "CultureID": {
+          "type": "nchar(6)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductPhoto": {
+      "kind": "table",
+      "columns": {
+        "ProductPhotoID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ThumbNailPhoto": {
+          "type": "varbinary(max)",
+          "nullable": true
+        },
+        "ThumbnailPhotoFileName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LargePhoto": {
+          "type": "varbinary(max)",
+          "nullable": true
+        },
+        "LargePhotoFileName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductProductPhoto": {
+      "kind": "table",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductPhotoID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Primary": {
+          "type": "bit",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductReview": {
+      "kind": "table",
+      "columns": {
+        "ProductReviewID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ReviewerName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ReviewDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "EmailAddress": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Rating": {
+          "type": "int",
+          "nullable": false
+        },
+        "Comments": {
+          "type": "nvarchar(3850)",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ProductSubcategory": {
+      "kind": "table",
+      "columns": {
+        "ProductSubcategoryID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductCategoryID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.ScrapReason": {
+      "kind": "table",
+      "columns": {
+        "ScrapReasonID": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.TransactionHistory": {
+      "kind": "table",
+      "columns": {
+        "TransactionID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ReferenceOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ReferenceOrderLineID": {
+          "type": "int",
+          "nullable": false
+        },
+        "TransactionDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "TransactionType": {
+          "type": "nchar(1)",
+          "nullable": false
+        },
+        "Quantity": {
+          "type": "int",
+          "nullable": false
+        },
+        "ActualCost": {
+          "type": "money",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.TransactionHistoryArchive": {
+      "kind": "table",
+      "columns": {
+        "TransactionID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ReferenceOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ReferenceOrderLineID": {
+          "type": "int",
+          "nullable": false
+        },
+        "TransactionDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "TransactionType": {
+          "type": "nchar(1)",
+          "nullable": false
+        },
+        "Quantity": {
+          "type": "int",
+          "nullable": false
+        },
+        "ActualCost": {
+          "type": "money",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.UnitMeasure": {
+      "kind": "table",
+      "columns": {
+        "UnitMeasureCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.vProductAndDescription": {
+      "kind": "view",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ProductModel": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "CultureID": {
+          "type": "nchar(6)",
+          "nullable": false
+        },
+        "Description": {
+          "type": "nvarchar(400)",
+          "nullable": false
+        }
+      }
+    },
+    "Production.vProductModelCatalogDescription": {
+      "kind": "view",
+      "columns": {
+        "ProductModelID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Summary": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Manufacturer": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Copyright": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "ProductURL": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "WarrantyPeriod": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "WarrantyDescription": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "NoOfYears": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "MaintenanceDescription": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "Wheel": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "Saddle": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "Pedal": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "BikeFrame": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "Crankset": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "PictureAngle": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "PictureSize": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "ProductPhotoID": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "Material": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "Color": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "ProductLine": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "Style": {
+          "type": "nvarchar(256)",
+          "nullable": true
+        },
+        "RiderExperience": {
+          "type": "nvarchar(1024)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.vProductModelInstructions": {
+      "kind": "view",
+      "columns": {
+        "ProductModelID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Instructions": {
+          "type": "nvarchar(max)",
+          "nullable": true
+        },
+        "LocationID": {
+          "type": "int",
+          "nullable": true
+        },
+        "SetupHours": {
+          "type": "decimal(9,4)",
+          "nullable": true
+        },
+        "MachineHours": {
+          "type": "decimal(9,4)",
+          "nullable": true
+        },
+        "LaborHours": {
+          "type": "decimal(9,4)",
+          "nullable": true
+        },
+        "LotSize": {
+          "type": "int",
+          "nullable": true
+        },
+        "Step": {
+          "type": "nvarchar(1024)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.vw_ProductVendors": {
+      "kind": "view",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductNumber": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "Product": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Vendor": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "StandardPrice": {
+          "type": "money",
+          "nullable": true
+        },
+        "LeadTimeDays": {
+          "type": "int",
+          "nullable": true
+        },
+        "MinOrderQty": {
+          "type": "int",
+          "nullable": true
+        },
+        "VendorStatus": {
+          "type": "varchar(9)",
+          "nullable": false
+        },
+        "CreditRating": {
+          "type": "tinyint",
+          "nullable": true
+        }
+      }
+    },
+    "Production.vw_StockAndCheapestVendor": {
+      "kind": "view",
+      "columns": {
+        "ProductNumber": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "Product": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ReorderPoint": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "QuantityInStock": {
+          "type": "int",
+          "nullable": true
+        },
+        "StockStatus": {
+          "type": "varchar(7)",
+          "nullable": false
+        },
+        "CheapestVendor": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "StandardPrice": {
+          "type": "money",
+          "nullable": false
+        }
+      }
+    },
+    "Production.WorkOrder": {
+      "kind": "table",
+      "columns": {
+        "WorkOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "OrderQty": {
+          "type": "int",
+          "nullable": false
+        },
+        "StockedQty": {
+          "type": "int",
+          "nullable": false
+        },
+        "ScrappedQty": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "EndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "DueDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "ScrapReasonID": {
+          "type": "smallint",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Production.WorkOrderRouting": {
+      "kind": "table",
+      "columns": {
+        "WorkOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "OperationSequence": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "LocationID": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "ScheduledStartDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "ScheduledEndDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "ActualStartDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "ActualEndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "ActualResourceHrs": {
+          "type": "decimal(9,4)",
+          "nullable": true
+        },
+        "PlannedCost": {
+          "type": "money",
+          "nullable": false
+        },
+        "ActualCost": {
+          "type": "money",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Purchasing.ProductVendor": {
+      "kind": "table",
+      "columns": {
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "AverageLeadTime": {
+          "type": "int",
+          "nullable": false
+        },
+        "StandardPrice": {
+          "type": "money",
+          "nullable": false
+        },
+        "LastReceiptCost": {
+          "type": "money",
+          "nullable": true
+        },
+        "LastReceiptDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "MinOrderQty": {
+          "type": "int",
+          "nullable": false
+        },
+        "MaxOrderQty": {
+          "type": "int",
+          "nullable": false
+        },
+        "OnOrderQty": {
+          "type": "int",
+          "nullable": true
+        },
+        "UnitMeasureCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Purchasing.PurchaseOrderDetail": {
+      "kind": "table",
+      "columns": {
+        "PurchaseOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "PurchaseOrderDetailID": {
+          "type": "int",
+          "nullable": false
+        },
+        "DueDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "OrderQty": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "UnitPrice": {
+          "type": "money",
+          "nullable": false
+        },
+        "LineTotal": {
+          "type": "money",
+          "nullable": false
+        },
+        "ReceivedQty": {
+          "type": "decimal(8,2)",
+          "nullable": false
+        },
+        "RejectedQty": {
+          "type": "decimal(8,2)",
+          "nullable": false
+        },
+        "StockedQty": {
+          "type": "decimal(9,2)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Purchasing.PurchaseOrderHeader": {
+      "kind": "table",
+      "columns": {
+        "PurchaseOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "RevisionNumber": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "Status": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "EmployeeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "VendorID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ShipMethodID": {
+          "type": "int",
+          "nullable": false
+        },
+        "OrderDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "ShipDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "SubTotal": {
+          "type": "money",
+          "nullable": false
+        },
+        "TaxAmt": {
+          "type": "money",
+          "nullable": false
+        },
+        "Freight": {
+          "type": "money",
+          "nullable": false
+        },
+        "TotalDue": {
+          "type": "money",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Purchasing.ShipMethod": {
+      "kind": "table",
+      "columns": {
+        "ShipMethodID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ShipBase": {
+          "type": "money",
+          "nullable": false
+        },
+        "ShipRate": {
+          "type": "money",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Purchasing.Vendor": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "AccountNumber": {
+          "type": "nvarchar(15)",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "CreditRating": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "PreferredVendorStatus": {
+          "type": "bit",
+          "nullable": false
+        },
+        "ActiveFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "PurchasingWebServiceURL": {
+          "type": "nvarchar(1024)",
+          "nullable": true
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Purchasing.vVendorWithAddresses": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "AddressType": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "AddressLine1": {
+          "type": "nvarchar(60)",
+          "nullable": false
+        },
+        "AddressLine2": {
+          "type": "nvarchar(60)",
+          "nullable": true
+        },
+        "City": {
+          "type": "nvarchar(30)",
+          "nullable": false
+        },
+        "StateProvinceName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "PostalCode": {
+          "type": "nvarchar(15)",
+          "nullable": false
+        },
+        "CountryRegionName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        }
+      }
+    },
+    "Purchasing.vVendorWithContacts": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ContactType": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Title": {
+          "type": "nvarchar(8)",
+          "nullable": true
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Suffix": {
+          "type": "nvarchar(10)",
+          "nullable": true
+        },
+        "PhoneNumber": {
+          "type": "nvarchar(25)",
+          "nullable": true
+        },
+        "PhoneNumberType": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailAddress": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailPromotion": {
+          "type": "int",
+          "nullable": false
+        }
+      }
+    },
+    "Purchasing.vw_PurchaseCostVsListPrice": {
+      "kind": "view",
+      "columns": {
+        "ProductNumber": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "Product": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "StandardCost": {
+          "type": "money",
+          "nullable": false
+        },
+        "ListPrice": {
+          "type": "money",
+          "nullable": false
+        },
+        "AvgPurchasePrice": {
+          "type": "money",
+          "nullable": true
+        },
+        "UnitsReceived": {
+          "type": "decimal(38,2)",
+          "nullable": true
+        },
+        "MarginPerUnit": {
+          "type": "money",
+          "nullable": true
+        }
+      }
+    },
+    "Purchasing.vw_PurchasingStaffOrders": {
+      "kind": "view",
+      "columns": {
+        "EmployeeID": {
+          "type": "int",
+          "nullable": false
+        },
+        "EmployeeName": {
+          "type": "nvarchar(101)",
+          "nullable": false
+        },
+        "JobTitle": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "PurchaseOrders": {
+          "type": "int",
+          "nullable": true
+        },
+        "TotalSpent": {
+          "type": "money",
+          "nullable": true
+        },
+        "LastOrderDate": {
+          "type": "datetime",
+          "nullable": true
+        }
+      }
+    },
+    "Sales.CountryRegionCurrency": {
+      "kind": "table",
+      "columns": {
+        "CountryRegionCode": {
+          "type": "nvarchar(3)",
+          "nullable": false
+        },
+        "CurrencyCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.CreditCard": {
+      "kind": "table",
+      "columns": {
+        "CreditCardID": {
+          "type": "int",
+          "nullable": false
+        },
+        "CardType": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "CardNumber": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "ExpMonth": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "ExpYear": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.Currency": {
+      "kind": "table",
+      "columns": {
+        "CurrencyCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.CurrencyRate": {
+      "kind": "table",
+      "columns": {
+        "CurrencyRateID": {
+          "type": "int",
+          "nullable": false
+        },
+        "CurrencyRateDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "FromCurrencyCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "ToCurrencyCode": {
+          "type": "nchar(3)",
+          "nullable": false
+        },
+        "AverageRate": {
+          "type": "money",
+          "nullable": false
+        },
+        "EndOfDayRate": {
+          "type": "money",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.Customer": {
+      "kind": "table",
+      "columns": {
+        "CustomerID": {
+          "type": "int",
+          "nullable": false
+        },
+        "PersonID": {
+          "type": "int",
+          "nullable": true
+        },
+        "StoreID": {
+          "type": "int",
+          "nullable": true
+        },
+        "TerritoryID": {
+          "type": "int",
+          "nullable": true
+        },
+        "AccountNumber": {
+          "type": "varchar(10)",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.PersonCreditCard": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "CreditCardID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesOrderDetail": {
+      "kind": "table",
+      "columns": {
+        "SalesOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "SalesOrderDetailID": {
+          "type": "int",
+          "nullable": false
+        },
+        "CarrierTrackingNumber": {
+          "type": "nvarchar(25)",
+          "nullable": true
+        },
+        "OrderQty": {
+          "type": "smallint",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "SpecialOfferID": {
+          "type": "int",
+          "nullable": false
+        },
+        "UnitPrice": {
+          "type": "money",
+          "nullable": false
+        },
+        "UnitPriceDiscount": {
+          "type": "money",
+          "nullable": false
+        },
+        "LineTotal": {
+          "type": "numeric(38,6)",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesOrderHeader": {
+      "kind": "table",
+      "columns": {
+        "SalesOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "RevisionNumber": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "OrderDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "DueDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "ShipDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "Status": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "OnlineOrderFlag": {
+          "type": "bit",
+          "nullable": false
+        },
+        "SalesOrderNumber": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "PurchaseOrderNumber": {
+          "type": "nvarchar(25)",
+          "nullable": true
+        },
+        "AccountNumber": {
+          "type": "nvarchar(15)",
+          "nullable": true
+        },
+        "CustomerID": {
+          "type": "int",
+          "nullable": false
+        },
+        "SalesPersonID": {
+          "type": "int",
+          "nullable": true
+        },
+        "TerritoryID": {
+          "type": "int",
+          "nullable": true
+        },
+        "BillToAddressID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ShipToAddressID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ShipMethodID": {
+          "type": "int",
+          "nullable": false
+        },
+        "CreditCardID": {
+          "type": "int",
+          "nullable": true
+        },
+        "CreditCardApprovalCode": {
+          "type": "varchar(15)",
+          "nullable": true
+        },
+        "CurrencyRateID": {
+          "type": "int",
+          "nullable": true
+        },
+        "SubTotal": {
+          "type": "money",
+          "nullable": false
+        },
+        "TaxAmt": {
+          "type": "money",
+          "nullable": false
+        },
+        "Freight": {
+          "type": "money",
+          "nullable": false
+        },
+        "TotalDue": {
+          "type": "money",
+          "nullable": false
+        },
+        "Comment": {
+          "type": "nvarchar(128)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesOrderHeaderSalesReason": {
+      "kind": "table",
+      "columns": {
+        "SalesOrderID": {
+          "type": "int",
+          "nullable": false
+        },
+        "SalesReasonID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesPerson": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "TerritoryID": {
+          "type": "int",
+          "nullable": true
+        },
+        "SalesQuota": {
+          "type": "money",
+          "nullable": true
+        },
+        "Bonus": {
+          "type": "money",
+          "nullable": false
+        },
+        "CommissionPct": {
+          "type": "smallmoney",
+          "nullable": false
+        },
+        "SalesYTD": {
+          "type": "money",
+          "nullable": false
+        },
+        "SalesLastYear": {
+          "type": "money",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesPersonQuotaHistory": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "QuotaDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "SalesQuota": {
+          "type": "money",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesReason": {
+      "kind": "table",
+      "columns": {
+        "SalesReasonID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ReasonType": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesTaxRate": {
+      "kind": "table",
+      "columns": {
+        "SalesTaxRateID": {
+          "type": "int",
+          "nullable": false
+        },
+        "StateProvinceID": {
+          "type": "int",
+          "nullable": false
+        },
+        "TaxType": {
+          "type": "tinyint",
+          "nullable": false
+        },
+        "TaxRate": {
+          "type": "smallmoney",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesTerritory": {
+      "kind": "table",
+      "columns": {
+        "TerritoryID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "CountryRegionCode": {
+          "type": "nvarchar(3)",
+          "nullable": false
+        },
+        "Group": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "SalesYTD": {
+          "type": "money",
+          "nullable": false
+        },
+        "SalesLastYear": {
+          "type": "money",
+          "nullable": false
+        },
+        "CostYTD": {
+          "type": "money",
+          "nullable": false
+        },
+        "CostLastYear": {
+          "type": "money",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SalesTerritoryHistory": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "TerritoryID": {
+          "type": "int",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "EndDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.ShoppingCartItem": {
+      "kind": "table",
+      "columns": {
+        "ShoppingCartItemID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ShoppingCartID": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Quantity": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "DateCreated": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SpecialOffer": {
+      "kind": "table",
+      "columns": {
+        "SpecialOfferID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Description": {
+          "type": "nvarchar(255)",
+          "nullable": false
+        },
+        "DiscountPct": {
+          "type": "smallmoney",
+          "nullable": false
+        },
+        "Type": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Category": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "StartDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "EndDate": {
+          "type": "datetime",
+          "nullable": false
+        },
+        "MinQty": {
+          "type": "int",
+          "nullable": false
+        },
+        "MaxQty": {
+          "type": "int",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.SpecialOfferProduct": {
+      "kind": "table",
+      "columns": {
+        "SpecialOfferID": {
+          "type": "int",
+          "nullable": false
+        },
+        "ProductID": {
+          "type": "int",
+          "nullable": false
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.Store": {
+      "kind": "table",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "SalesPersonID": {
+          "type": "int",
+          "nullable": true
+        },
+        "Demographics": {
+          "type": "xml(max)",
+          "nullable": true
+        },
+        "rowguid": {
+          "type": "uniqueidentifier",
+          "nullable": false
+        },
+        "ModifiedDate": {
+          "type": "datetime",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.vIndividualCustomer": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Title": {
+          "type": "nvarchar(8)",
+          "nullable": true
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Suffix": {
+          "type": "nvarchar(10)",
+          "nullable": true
+        },
+        "PhoneNumber": {
+          "type": "nvarchar(25)",
+          "nullable": true
+        },
+        "PhoneNumberType": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailAddress": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailPromotion": {
+          "type": "int",
+          "nullable": false
+        },
+        "AddressType": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "AddressLine1": {
+          "type": "nvarchar(60)",
+          "nullable": false
+        },
+        "AddressLine2": {
+          "type": "nvarchar(60)",
+          "nullable": true
+        },
+        "City": {
+          "type": "nvarchar(30)",
+          "nullable": false
+        },
+        "StateProvinceName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "PostalCode": {
+          "type": "nvarchar(15)",
+          "nullable": false
+        },
+        "CountryRegionName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Demographics": {
+          "type": "xml(max)",
+          "nullable": true
+        }
+      }
+    },
+    "Sales.vPersonDemographics": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "TotalPurchaseYTD": {
+          "type": "money",
+          "nullable": true
+        },
+        "DateFirstPurchase": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "BirthDate": {
+          "type": "datetime",
+          "nullable": true
+        },
+        "MaritalStatus": {
+          "type": "nvarchar(1)",
+          "nullable": true
+        },
+        "YearlyIncome": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Gender": {
+          "type": "nvarchar(1)",
+          "nullable": true
+        },
+        "TotalChildren": {
+          "type": "int",
+          "nullable": true
+        },
+        "NumberChildrenAtHome": {
+          "type": "int",
+          "nullable": true
+        },
+        "Education": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Occupation": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "HomeOwnerFlag": {
+          "type": "bit",
+          "nullable": true
+        },
+        "NumberCarsOwned": {
+          "type": "int",
+          "nullable": true
+        }
+      }
+    },
+    "Sales.vSalesPerson": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Title": {
+          "type": "nvarchar(8)",
+          "nullable": true
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Suffix": {
+          "type": "nvarchar(10)",
+          "nullable": true
+        },
+        "JobTitle": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "PhoneNumber": {
+          "type": "nvarchar(25)",
+          "nullable": true
+        },
+        "PhoneNumberType": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailAddress": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailPromotion": {
+          "type": "int",
+          "nullable": false
+        },
+        "AddressLine1": {
+          "type": "nvarchar(60)",
+          "nullable": false
+        },
+        "AddressLine2": {
+          "type": "nvarchar(60)",
+          "nullable": true
+        },
+        "City": {
+          "type": "nvarchar(30)",
+          "nullable": false
+        },
+        "StateProvinceName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "PostalCode": {
+          "type": "nvarchar(15)",
+          "nullable": false
+        },
+        "CountryRegionName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "TerritoryName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "TerritoryGroup": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "SalesQuota": {
+          "type": "money",
+          "nullable": true
+        },
+        "SalesYTD": {
+          "type": "money",
+          "nullable": false
+        },
+        "SalesLastYear": {
+          "type": "money",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.vSalesPersonSalesByFiscalYears": {
+      "kind": "view",
+      "columns": {
+        "SalesPersonID": {
+          "type": "int",
+          "nullable": true
+        },
+        "FullName": {
+          "type": "nvarchar(152)",
+          "nullable": true
+        },
+        "JobTitle": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "SalesTerritory": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "2002": {
+          "type": "money",
+          "nullable": true
+        },
+        "2003": {
+          "type": "money",
+          "nullable": true
+        },
+        "2004": {
+          "type": "money",
+          "nullable": true
+        }
+      }
+    },
+    "Sales.vStoreWithAddresses": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "AddressType": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "AddressLine1": {
+          "type": "nvarchar(60)",
+          "nullable": false
+        },
+        "AddressLine2": {
+          "type": "nvarchar(60)",
+          "nullable": true
+        },
+        "City": {
+          "type": "nvarchar(30)",
+          "nullable": false
+        },
+        "StateProvinceName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "PostalCode": {
+          "type": "nvarchar(15)",
+          "nullable": false
+        },
+        "CountryRegionName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.vStoreWithContacts": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ContactType": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Title": {
+          "type": "nvarchar(8)",
+          "nullable": true
+        },
+        "FirstName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "MiddleName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "LastName": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Suffix": {
+          "type": "nvarchar(10)",
+          "nullable": true
+        },
+        "PhoneNumber": {
+          "type": "nvarchar(25)",
+          "nullable": true
+        },
+        "PhoneNumberType": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailAddress": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "EmailPromotion": {
+          "type": "int",
+          "nullable": false
+        }
+      }
+    },
+    "Sales.vStoreWithDemographics": {
+      "kind": "view",
+      "columns": {
+        "BusinessEntityID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "AnnualSales": {
+          "type": "money",
+          "nullable": true
+        },
+        "AnnualRevenue": {
+          "type": "money",
+          "nullable": true
+        },
+        "BankName": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "BusinessType": {
+          "type": "nvarchar(5)",
+          "nullable": true
+        },
+        "YearOpened": {
+          "type": "int",
+          "nullable": true
+        },
+        "Specialty": {
+          "type": "nvarchar(50)",
+          "nullable": true
+        },
+        "SquareFeet": {
+          "type": "int",
+          "nullable": true
+        },
+        "Brands": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "Internet": {
+          "type": "nvarchar(30)",
+          "nullable": true
+        },
+        "NumberEmployees": {
+          "type": "int",
+          "nullable": true
+        }
+      }
+    },
+    "Sales.vw_ProductSalesByTerritory": {
+      "kind": "view",
+      "columns": {
+        "Territory": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Region": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "ProductNumber": {
+          "type": "nvarchar(25)",
+          "nullable": false
+        },
+        "Product": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "Color": {
+          "type": "nvarchar(15)",
+          "nullable": true
+        },
+        "UnitsSold": {
+          "type": "int",
+          "nullable": true
+        },
+        "Revenue": {
+          "type": "numeric(38,6)",
+          "nullable": true
+        }
+      }
+    },
+    "Sales.vw_RevenueByCategory": {
+      "kind": "view",
+      "columns": {
+        "Category": {
+          "type": "nvarchar(50)",
+          "nullable": false
+        },
+        "OrderYear": {
+          "type": "int",
+          "nullable": true
+        },
+        "Orders": {
+          "type": "int",
+          "nullable": true
+        },
+        "UnitsSold": {
+          "type": "int",
+          "nullable": true
+        },
+        "Revenue": {
+          "type": "numeric(38,6)",
+          "nullable": true
+        }
+      }
+    }
+  }
+}

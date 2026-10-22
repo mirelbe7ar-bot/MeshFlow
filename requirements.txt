@@ -1,0 +1,5 @@
+sqlglot
+pyyaml
+pyodbc
+pandas
+jupyter

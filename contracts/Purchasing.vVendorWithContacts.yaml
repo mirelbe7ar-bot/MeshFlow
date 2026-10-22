@@ -1,0 +1,77 @@
+contract: Purchasing.vVendorWithContacts
+consumer_domain: Purchasing
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Person.BusinessEntityContact
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: ContactTypeID
+    type: int
+  - name: PersonID
+    type: int
+- table: Person.ContactType
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: ContactTypeID
+    type: int
+  - name: Name
+    type: nvarchar(50)
+- table: Person.EmailAddress
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: EmailAddress
+    type: nvarchar(50)
+- table: Person.Person
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: EmailPromotion
+    type: int
+  - name: FirstName
+    type: nvarchar(50)
+  - name: LastName
+    type: nvarchar(50)
+  - name: MiddleName
+    type: nvarchar(50)
+  - name: Suffix
+    type: nvarchar(10)
+  - name: Title
+    type: nvarchar(8)
+- table: Person.PersonPhone
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: PhoneNumber
+    type: nvarchar(25)
+  - name: PhoneNumberTypeID
+    type: int
+- table: Person.PhoneNumberType
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: PhoneNumberTypeID
+    type: int
+- table: Purchasing.Vendor
+  producer_domain: Purchasing
+  cross_domain: false
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: Name
+    type: nvarchar(50)

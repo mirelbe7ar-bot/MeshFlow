@@ -1,0 +1,61 @@
+contract: HumanResources.vEmployeeDepartmentHistory
+consumer_domain: HumanResources
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: HumanResources.Department
+  producer_domain: HumanResources
+  cross_domain: false
+  columns:
+  - name: DepartmentID
+    type: smallint
+  - name: GroupName
+    type: nvarchar(50)
+  - name: Name
+    type: nvarchar(50)
+- table: HumanResources.Employee
+  producer_domain: HumanResources
+  cross_domain: false
+  columns:
+  - name: BusinessEntityID
+    type: int
+- table: HumanResources.EmployeeDepartmentHistory
+  producer_domain: HumanResources
+  cross_domain: false
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: DepartmentID
+    type: smallint
+  - name: EndDate
+    type: date
+  - name: ShiftID
+    type: tinyint
+  - name: StartDate
+    type: date
+- table: HumanResources.Shift
+  producer_domain: HumanResources
+  cross_domain: false
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: ShiftID
+    type: tinyint
+- table: Person.Person
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: FirstName
+    type: nvarchar(50)
+  - name: LastName
+    type: nvarchar(50)
+  - name: MiddleName
+    type: nvarchar(50)
+  - name: Suffix
+    type: nvarchar(10)
+  - name: Title
+    type: nvarchar(8)

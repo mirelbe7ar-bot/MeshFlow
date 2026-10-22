@@ -1,0 +1,51 @@
+contract: Sales.vw_RevenueByCategory
+consumer_domain: Sales
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: Production.Product
+  producer_domain: Production
+  cross_domain: true
+  columns:
+  - name: ProductID
+    type: int
+  - name: ProductSubcategoryID
+    type: int
+- table: Production.ProductCategory
+  producer_domain: Production
+  cross_domain: true
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: ProductCategoryID
+    type: int
+- table: Production.ProductSubcategory
+  producer_domain: Production
+  cross_domain: true
+  columns:
+  - name: ProductCategoryID
+    type: int
+  - name: ProductSubcategoryID
+    type: int
+- table: Sales.SalesOrderDetail
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: LineTotal
+    type: numeric(38,6)
+  - name: OrderQty
+    type: smallint
+  - name: ProductID
+    type: int
+  - name: SalesOrderID
+    type: int
+- table: Sales.SalesOrderHeader
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: OrderDate
+    type: datetime
+  - name: SalesOrderID
+    type: int

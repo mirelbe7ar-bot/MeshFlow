@@ -1,0 +1,53 @@
+contract: Sales.vSalesPersonSalesByFiscalYears
+consumer_domain: Sales
+generated: automatically
+generated_at: '2026-10-22T11:30:14'
+source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+warnings: []
+depends_on:
+- table: HumanResources.Employee
+  producer_domain: HumanResources
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: JobTitle
+    type: nvarchar(50)
+- table: Person.Person
+  producer_domain: Person
+  cross_domain: true
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: FirstName
+    type: nvarchar(50)
+  - name: LastName
+    type: nvarchar(50)
+  - name: MiddleName
+    type: nvarchar(50)
+- table: Sales.SalesOrderHeader
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: OrderDate
+    type: datetime
+  - name: SalesPersonID
+    type: int
+  - name: SubTotal
+    type: money
+- table: Sales.SalesPerson
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: BusinessEntityID
+    type: int
+  - name: TerritoryID
+    type: int
+- table: Sales.SalesTerritory
+  producer_domain: Sales
+  cross_domain: false
+  columns:
+  - name: Name
+    type: nvarchar(50)
+  - name: TerritoryID
+    type: int

@@ -1,8 +1,8 @@
 contract: Sales.vw_ProductSalesByTerritory
 consumer_domain: Sales
 generated: automatically
-generated_at: '2026-10-22T11:30:14'
-source: sys.sql_modules (metadata snapshot 2026-10-22T11:30:14)
+generated_at: '2026-11-06T19:57:20'
+source: sys.sql_modules (metadata snapshot 2026-11-06T21:56:02)
 warnings: []
 depends_on:
 - table: Production.Product

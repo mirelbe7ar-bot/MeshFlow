@@ -1,7 +1,7 @@
 {
   "server": "localhost\\MSSQLSERVER02",
   "database": "AdventureWorks2022",
-  "exported_at": "2026-10-22T11:30:14",
+  "exported_at": "2026-11-06T21:56:02",
   "views": [
     {
       "schema": "HumanResources",
@@ -132,6 +132,11 @@
       "schema": "Sales",
       "name": "vStoreWithDemographics",
       "definition": "\r\nCREATE VIEW [Sales].[vStoreWithDemographics] AS \r\nSELECT \r\n    s.[BusinessEntityID] \r\n    ,s.[Name] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/AnnualSales)[1]', 'money') AS [AnnualSales] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/AnnualRevenue)[1]', 'money') AS [AnnualRevenue] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/BankName)[1]', 'nvarchar(50)') AS [BankName] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/BusinessType)[1]', 'nvarchar(5)') AS [BusinessType] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/YearOpened)[1]', 'integer') AS [YearOpened] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/Specialty)[1]', 'nvarchar(50)') AS [Specialty] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/SquareFeet)[1]', 'integer') AS [SquareFeet] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/Brands)[1]', 'nvarchar(30)') AS [Brands] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/Internet)[1]', 'nvarchar(30)') AS [Internet] \r\n    ,s.[Demographics].value('declare default element namespace \"http://schemas.microsoft.com/sqlserver/2004/07/adventure-works/StoreSurvey\"; \r\n        (/StoreSurvey/NumberEmployees)[1]', 'integer') AS [NumberEmployees] \r\nFROM [Sales].[Store] s;\r\n"
+    },
+    {
+      "schema": "Sales",
+      "name": "vw_AllProductCategories",
+      "definition": "\n-- Scenario 9 (living contracts): a consumer STOPS using columns.\n-- The Sales team rewrites its SELECT * view to list only the columns it really needs.\n-- After regenerating, ModifiedDate and rowguid are no longer protected,\n-- so dropping ModifiedDate (scenarios/s10_select_star.sql) now passes.\nCREATE   VIEW Sales.vw_AllProductCategories AS\nSELECT ProductCategoryID,\n       Name\nFROM Production.ProductCategory;\n"
     },
     {
       "schema": "Sales",
@@ -3771,6 +3776,19 @@
         "NumberEmployees": {
           "type": "int",
           "nullable": true
+        }
+      }
+    },
+    "Sales.vw_AllProductCategories": {
+      "kind": "view",
+      "columns": {
+        "ProductCategoryID": {
+          "type": "int",
+          "nullable": false
+        },
+        "Name": {
+          "type": "nvarchar(50)",
+          "nullable": false
         }
       }
     },

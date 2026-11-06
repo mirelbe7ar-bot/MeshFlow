@@ -136,13 +136,27 @@ def generate():
         n_tables = len(contract["depends_on"])
         n_cols = sum(len(d["columns"]) for d in contract["depends_on"])
         cross = sum(1 for d in contract["depends_on"] if d["cross_domain"])
-        summary.append((name, "OK", f"{n_tables} tables ({cross} from other domains), {n_cols} columns"))
+        info = f"{n_tables} tables ({cross} from other domains), {n_cols} columns"
+        if warnings:
+            info += "  WARNING: " + "; ".join(warnings)
+        summary.append((name, "OK", info))
+
+    # living contracts: remove automatic contracts of consumer views that no longer exist
+    current = {f"{v['schema']}.{v['name']}" for v in snap["views"]}
+    for path in sorted(CONTRACTS.glob("*.yaml")):
+        old = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        if old.get("generated") == "automatically" and path.stem not in current:
+            path.unlink()
+            summary.append((path.stem, "REMOVED", "view no longer exists, contract deleted"))
 
     print(f"\nContracts written to {CONTRACTS}\n")
     for name, status, info in summary:
         print(f"  {status:8} {name:48} {info}")
     ok = sum(1 for s in summary if s[1] == "OK")
-    print(f"\n{ok} contracts generated, {len(summary) - ok} views skipped or failed")
+    skipped = sum(1 for s in summary if s[1] in ("SKIPPED", "ERROR"))
+    removed = sum(1 for s in summary if s[1] == "REMOVED")
+    print(f"\n{ok} contracts generated, {skipped} views skipped or failed"
+          + (f", {removed} old contract(s) removed" if removed else ""))
 
 
 if __name__ == "__main__":

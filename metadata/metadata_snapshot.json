@@ -1,7 +1,7 @@
 {
   "server": "localhost\\MSSQLSERVER02",
   "database": "AdventureWorks2022",
-  "exported_at": "2026-11-06T21:56:02",
+  "exported_at": "2026-11-08T20:10:29",
   "views": [
     {
       "schema": "HumanResources",
